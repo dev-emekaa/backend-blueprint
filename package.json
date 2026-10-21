@@ -1,0 +1,28 @@
+{
+  "name": "backend-blueprint",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Spec-to-ship backend workflow for Claude Code — the docs come first, and every endpoint traces back to them.",
+  "type": "module",
+  "bin": {
+    "backend-blueprint": "bin/install.mjs"
+  },
+  "scripts": {
+    "package": "node scripts/build-folder.mjs"
+  },
+  "files": [
+    "bin",
+    "lib",
+    "assets",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dev-emekaa/backend-blueprint.git"
+  },
+  "license": "UNLICENSED",
+  "author": "dev-emeka"
+}

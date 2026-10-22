@@ -80,7 +80,9 @@ is never mistaken for a full one.
 5. **Approve nothing implicitly.** Content is drafted from the sources, and nothing is
    treated as settled until its issues are cleared — a later phase's feature stays `Draft` in
    `implementation-order.md`, and a first-phase area stays `Draft` in the feature-areas
-   registry until its docs are written and reviewed. An accepted recommendation is applied to the
+   registry until its docs are written and reviewed. For a later phase's feature, "its docs"
+   means its rules and flows: the client designs and builds the screens once those are
+   settled, and the specs arrive afterwards, so `Ready` never waits on screen specs. An accepted recommendation is applied to the
    phase files and removed from the review docs. A stakeholder alternative is judged by
    the same standard: if it meets it, it is applied and removed; if not, the issue stays, with
    the reason and a corrected recommendation. An **action** needs no acceptance: it is applied

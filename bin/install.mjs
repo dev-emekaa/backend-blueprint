@@ -125,7 +125,7 @@ ${c.b('What it writes')}
 
 async function main() {
   const [major] = process.versions.node.split('.').map(Number);
-  if (major < 18) { console.error(c.r(`Node 18+ required (found ${process.versions.node})`)); process.exit(1); }
+  if (major < 22) { console.error(c.r(`Node 22+ required (found ${process.versions.node})`)); process.exit(1); }
 
   const opts = parseArgs(process.argv.slice(2));
   if (!opts.cmd || opts.cmd === 'help' || opts.cmd === '--help' || opts.cmd === '-h') { usage(); return; }

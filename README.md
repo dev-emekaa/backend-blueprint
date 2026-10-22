@@ -264,4 +264,4 @@ The zip appears under the release's **Assets** as `backend-blueprint-v1.3.0.zip`
 
 `prompts/` holds the pre-skill versions of nine of the skills, frozen as they were in the paste-into-a-chat era, with its intros and `{PLACEHOLDER}` blocks. Useful if you want to run the workflow outside Claude Code — but the skills are the maintained copies and have moved on (above all, the prompts predate the client-pairing handoff files and still describe copying docs by hand).
 
-**Requires** Node 18 or later, and Claude Code. **License** proprietary — all rights reserved.
+**Requires** Node 22 or later, and Claude Code. **License** proprietary — all rights reserved.

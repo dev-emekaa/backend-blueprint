@@ -102,14 +102,14 @@ State machines stay with their feature area, not in a global appendix.
 
 ## Rules
 
-1. Cover every user-facing flow(both happy and error paths) for all roles defined in the PRD. Do not skip flows.
-2. For every userflow, if the flow will be different for different user roles then do a seperate version of that flow for each of the user role it differs for, but if the flows will be almost the same i.e near-duplicates with the tier difference buried then instead just use one flow and put the tier difference in explicit IF/THEN logic instead.
+1. Cover every user-facing flow (both happy and error paths) for all roles defined in the PRD. Do not skip flows.
+2. For every userflow, if the flow will be different for different user roles then do a separate version of that flow for each of the user role it differs for, but if the flows will be almost the same i.e near-duplicates with the tier difference buried then instead just use one flow and put the tier difference in explicit IF/THEN logic instead.
 3. Every flow states its actor on its `Actor:` line — the role or roles the flow belongs to.
 4. No code blocks. Use plain text IF/THEN/ELSE bullets for logic. Only use structured pseudocode if a process is too complex for IF/THEN/ELSE to express clearly.
 5. Flow-focused only — describe what the user can do or see, not visual layout or positioning.
 6. No fluff — no introductions, no marketing language, no redundant context.
 7. Every step must clearly separate what the user does from what the system does.
-8. Do not invent features, flows, or constraints that arent meant to be in the app or can't be inferred from the PRD, the business rules, or (in From designs mode) the designs. Reference material supplied for inspiration is never a source — a flow exists because the PRD or the business rules call for it, not because another product has one.
+8. Do not invent features, flows, or constraints that aren't meant to be in the app or can't be inferred from the PRD, the business rules, or (in From designs mode) the designs. Reference material supplied for inspiration is never a source — a flow exists because the PRD or the business rules call for it, not because another product has one.
 9. Use consistent naming — if a screen or action is referenced across multiple flows, use the exact same name everywhere.
 10. Let it be clear, concise and efficient, but plain and simple so it's easy to understand not just by technical readers but also the non-technical readers that will read/use it too.
 11. Docs never mention issues, resolutions, decisions or the review process.

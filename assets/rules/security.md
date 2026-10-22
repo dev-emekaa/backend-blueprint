@@ -54,7 +54,7 @@ What must hold in every part of this backend, whatever the stack. This file is p
 - **HTTPS only in every deployed environment**, with HSTS. Local development runs on plain `http://localhost`. Traffic between services stays on the private network.
 - **CORS** allows an explicit list of origins per environment. Never `*` with credentials, never the request's own `Origin` echoed back.
 - **Security headers on every response:** `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, HSTS.
-- **Endpoints that accept cookie auth are protected against CSRF:** `SameSite` cookies plus a CSRF token or a required custom header on every state-changing request. `GET` never changes state.
+- **Endpoints that accept cookie auth are protected against CSRF:** every state-changing request must carry a required custom header (`X-Requested-With: fetch`, unless the project records another in `api-docs-conventions`) — a browser cannot attach custom headers cross-site — with `SameSite` cookies as the second layer. `GET` never changes state.
 - **No secrets or personal data in URLs** — query strings land in logs, browser history and CDN logs. The exceptions — signed media URLs, real-time tickets, one-time email links — are short-lived, and tickets and links work once.
 - **The client IP comes from the platform's proxy header, with the trusted proxies configured explicitly.** Rate limits and the audit trail then use an address the caller cannot forge.
 - **Retried operations take an idempotency key** — payments, orders, transfers. The same key returns the original result instead of acting twice.

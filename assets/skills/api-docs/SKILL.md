@@ -30,14 +30,14 @@ Take these from what I said when invoking, and from the project's own files. Ask
 3. **Audiences and clients.** The primary audience sits at the root of `docs/api-docs/`; other audiences get `{audience}/` subfolders. Root API docs are platform-wide and bind every audience; an audience file holds only what is unique to it. API docs never split by client — an endpoint used by only some clients carries a `Clients:` field instead.
 4. **Concise, no bloat.** Omit any section that doesn't apply to an endpoint. No filler, no restating global conventions per endpoint.
 5. **Realistic examples.** Use real-looking ids, names, and ISO-8601 UTC timestamps in JSON — never `{"foo":"bar"}`.
-6. **Errors = realistic and client-actionable only.** Cover validation, auth, ownership, state-conflict, and business-rule errors with status + the real thrown message. Skip generic 500s and unbounded cases.
+6. **Errors = realistic and client-actionable only.** Cover validation, auth, ownership, state-conflict, and business-rule errors with status + the stable error code + the real thrown message. Skip generic 500s and unbounded cases.
 7. **Deprecated endpoints and fields stay documented until they are removed.** Mark each one deprecated and name what replaces it, so client devs know not to build on it. It leaves the doc only when the thing itself is deleted.
 8. **Resolvable links.** Cross-reference anchors must slugify correctly (lowercase, dashes, no punctuation).
 9. **Take stock first.** Existing docs are updated in place, not regenerated.
 
 ## Cross-cutting artifacts (produce alongside the per-area docs)
 
-- **Conventions doc — conditional.** If globals repeat across endpoints (auth header + refresh, error envelope, pagination params/envelope, date format, idempotency, soft-delete → 404, file-upload rules), put them **once** in `api-docs-conventions.md` and have each area doc point at it — don't restate per endpoint. If the API is tiny or has no meaningful shared rules, inline the few globals in the area doc's own conventions section and skip a separate file. Keep it code-accurate. Suggested sections: Base URL(s) & environments · Authentication (tokens, refresh, revocation) · Roles/access model · Error responses (codes + body shape) · Validation · Pagination · Dates · File uploads · Any other cross-cutting mechanic (push, idempotency, soft deletes, deep links). Two entries always belong here where they apply: **clients must tolerate unknown enum values**, which is what keeps adding an enum value additive rather than breaking; and, where a nullable column was added after launch, that **NULL means *not collected*** rather than a default.
+- **Conventions doc — conditional.** If globals repeat across endpoints (auth header + refresh, error envelope, pagination params/envelope, date format, idempotency, soft-delete → 404, file-upload rules), put them **once** in `api-docs-conventions.md` and have each area doc point at it — don't restate per endpoint. If the API is tiny or has no meaningful shared rules, inline the few globals in the area doc's own conventions section and skip a separate file. Keep it code-accurate. Suggested sections: Base URL(s) & environments · Authentication (tokens, refresh, revocation, the required CSRF header) · Roles/access model · Error responses (codes + body shape) · Validation · Pagination · Dates · File uploads · Any other cross-cutting mechanic (push, idempotency, soft deletes, deep links). Two entries always belong here where they apply: **clients must tolerate unknown enum values**, which is what keeps adding an enum value additive rather than breaking; and, where a nullable column was added after launch, that **NULL means *not collected*** rather than a default.
 - **Shared doc — conditional.** Create `api-docs-shared.md` **only** for endpoints with no single-area home or genuinely cross-area system/utility endpoints. An endpoint that has a clear owner but is *consumed* by other areas stays in its owner's doc and is cross-linked — do **not** move it to shared.
 
 ## Phase builds
@@ -109,8 +109,8 @@ Cross-references:
 {one-line notes on non-obvious fields, or a small field table, only if needed}
 
 **Errors**
-| status | when | example message |
-| --- | --- | --- |
+| status | code | when | example message |
+| --- | --- | --- | --- |
 
 **Side effects**
 - {write endpoints only: notifications fired, jobs enqueued, ledger/DB writes, external API calls}

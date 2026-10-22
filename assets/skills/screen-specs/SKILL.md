@@ -25,7 +25,7 @@ Read these, and ask for anything missing before starting.
 
 **From app flows (no designs)** — also:
 
-- Design System rules file
+- The design system file, where the project has one
 
 **From designs** — also:
 
@@ -91,7 +91,7 @@ List states where the available actions, displayed data, or visible sections mat
 8. Modals/drawers get their own mini-spec below the parent screen.
 9. Same data on multiple screens uses the exact same field name everywhere.
 10. A screen that appears in several feature areas' userflows belongs to **the area whose entity's lifecycle it advances** — a checkout screen reads a cart, an address and a payment method, but it exists to create an order, so it is an Orders screen. A read-only screen advances nothing: it belongs to the area whose decisions it serves — the action its viewer takes from it — and only where it serves none, the area owning most of what it shows. Reference it by name in the other areas' files; never duplicate its full spec.
-11. Let it be clear, concise and efficient, but plain and simple so it's easy to understand rather than it being too technical and complicated. But if there is any part of it that is meant to be technical then leave those parts technical(don't oversimplify those parts)
+11. Let it be clear, concise and efficient, but plain and simple so it's easy to understand rather than it being too technical and complicated. But if there is any part of it that is meant to be technical then leave those parts technical (don't oversimplify those parts)
 12. Docs never mention issues, resolutions, decisions or the review process.
 13. Take stock first. Existing drafts are unvalidated: fix them in place rather than regenerating. Errors in canonical files about already-built behaviour are reported, not fixed.
 

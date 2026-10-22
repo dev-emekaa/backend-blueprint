@@ -3,6 +3,7 @@
 | Type | Location |
 | --- | --- |
 | Feature-areas registry | `docs/feature-areas.md` |
+| Schema | `docs/schema.md` |
 | PRD and product brief | `docs/product-docs/` |
 | Business rules | `docs/business-rules/` |
 | App flows | `docs/app-flows/` |
@@ -36,6 +37,10 @@
 | Dev server command | |
 | Reset/reseed command | |
 | Production status | not yet launched |
+| Production base URL | once launched |
 | Production deploy trigger | Deploy Production workflow, run manually on the verified commit |
 | Client(s) integrating | |
 | Client release status | |
+| Client team | who integrates, and where they work from |
+| Minimum-supported-version endpoint | store-distributed or installed clients only |
+| Repo layout note | monorepo or anything else worth knowing |

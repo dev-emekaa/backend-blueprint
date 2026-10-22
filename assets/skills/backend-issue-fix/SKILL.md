@@ -1,6 +1,6 @@
 ---
 name: backend-issue-fix
-description: Resolve backend or API issues — found by me, by the client devs, or by anyone else — through validation, doc updates, code fixes, tests, curl verification on dev and staging, and a client handoff. Use for bugs, wrong behaviour and small corrections to built endpoints.
+description: Resolve backend or API issues, whoever found them — given in chat or arriving in the clients' integration-handoff files — through validation, doc updates, code fixes, tests, curl verification on dev and staging, and a client handoff. Use for bugs, wrong behaviour and small corrections to built endpoints.
 ---
 
 # Backend Issue Fix
@@ -29,8 +29,8 @@ Read these from the project's `CLAUDE.md`. If a value isn't recorded there, ask 
 | **Infra / deployment docs** | Where the infra docs live, e.g. `docs/infra/`. Referred to below as `{{INFRA_DOCS_PATH}}`. |
 | **Client(s) integrating** | e.g. mobile app, web dashboard. Decides how a breaking change is handled. |
 | **Client team** | Who integrates, and where they work from. |
-| **Scope in play now** | Which feature areas are live for this session. |
-| **Scope explicitly deferred** | Which are not. |
+| **Scope in play now** | Which feature areas are live for this session — I state this with the issues, not in `CLAUDE.md`. |
+| **Scope explicitly deferred** | Which are not — stated the same way. |
 
 Throughout this skill, `{{PROD_STATUS}}`, `{{CLIENT_TYPE}}`, `{{LOCAL_BASE_URL}}` and the rest refer to these values.
 
@@ -40,7 +40,7 @@ Throughout this skill, `{{PROD_STATUS}}`, `{{CLIENT_TYPE}}`, `{{LOCAL_BASE_URL}}
 
 - We are building the **`{{PROJECT_NAME}}` backend**, deployed to staging at `{{STAGING_BASE_URL}}`.
 - Infrastructure and deployment are documented in `{{INFRA_DOCS_PATH}}`. Consult it whenever you need to understand the environment setup.
-- The **`{{CLIENT_TYPE}}`** integrates these endpoints from `{{CLIENT_REPO_NOTE}}`.
+- The **`{{CLIENT_TYPE}}`** integrates these endpoints; who integrates and where they work from is the `Client team` value.
 - All **`{{IN_SCOPE_AREAS}}`** have already been built through the backend build process.
 - We are **not** building **`{{OUT_OF_SCOPE_AREAS}}`** yet. First we must resolve the outstanding issues in the in-scope areas so they are solid before the client integrates them.
 
@@ -48,85 +48,17 @@ I will send you a list of issues. For each one, follow the per-issue workflow in
 
 ### 2.1 — Engineering Constraints
 
-These apply to **every** change you make — the Step 3 fixes, any new endpoints, and any fix that comes out of verification testing.
+**Read `.claude/skills/backend-build/SKILL.md` → Section 3 (Global Constraints) before the first fix.** Everything it binds for a build binds a fix the same way: server-side enforcement and validation, the two-part access-control decision (role access and record scope, with the registry authoritative for built endpoints), secrets and the shared-credentials convention, schema-change safety by `{{PROD_STATUS}}` (expand → backfill → migrate → contract after launch), the four background-work rules and the first-tick backlog bound, webhooks registered in both registers, no N+1 in list endpoints, and API-change classification with the deprecation path for store-distributed clients and the coordination requirement for web-only ones.
 
-**Standards.** Follow `coding-standards`, `security`, `testing` and `tech-stack` as written — plus `ai-services` where a fix touches code that calls a model, and `ci-cd` where it touches the pipelines or deploy configuration. This skill does not restate them.
+On top of those, a fix adds:
 
-**Access control and data exposure**
-
-- Validate every request payload/DTO. No unvalidated input reaches business logic.
-- Return only the fields the screen/UI specs call for. Never leak internal fields, credentials, or other users' data in a response.
-
-**Access control has two parts. Decide both, separately.**
-
-**1. Role access — who may call this endpoint.** The **endpoint & access-control registry** is authoritative for endpoints already built — confirm every endpoint's guard/role matches its entry. For anything new or changed, the sources state it directly: the **screen specs** list the roles that can access each screen, the **flows doc** states the role each flow belongs to, the **business rules** gate specific actions by role, and the `prd` defines the roles and their permissions — including the shared variants of each. **A role named in prose counts as a grant** — no formal permission table is required. Where the business rules restrict something a flow or screen reads as permitted, **the restriction wins**. Update the registry for any endpoint that is new or whose access changed.
-
-**2. Record scope — which records that role may touch.** Scope is usually implied by context rather than stated outright. Determine it in this order:
-
-1. **Start at the narrowest scope:** the user's own records.
-2. **Widen only where a source shows wider access.** Any of the three can establish it: the flows doc showing a flow that acts on records belonging to others, the business rules stating what a role may reach, or the screen specs describing a screen that displays other users' records. Whichever states it most specifically is the specification — implement what it shows, and don't narrow it because it wasn't phrased as a permission.
-    - **On contradiction:** the business rules win, whether they widen or restrict. If the flows doc and screen specs disagree on scope and the business rules are silent, treat it as two defensible readings — raise it with me rather than picking one.
-3. **Bound the widening.** Wider access is almost never global. Identify what limits it — the group, organization, or other boundary the user belongs to or administers — and enforce that boundary **in the query itself**, not after fetching.
-4. **Check the result against the registry.** If the fix changes an endpoint's scope, update its entry with the condition and the source it came from, and flag it as client-visible in the Step 7 report.
-
-**Stop and ask only when a scope has two defensible readings that expose different data.**
-
-**Correctness**
-
-- For each business rule you implement or change, state which rule in the **business rules** doc it enforces, and where in the code it is enforced.
-- Enforce rules server-side. Never rely on the client to prevent an invalid action.
-
-**Schema changes**
-
-- Conform to the schema conventions already established in the codebase — key strategy, soft-delete, audit/timestamp, ownership chains. A fix is not the place to change them.
-- Migrations must be safe to apply to an environment with existing data, and `{{PROD_STATUS}}` sets the bar. **Before launch:** staging is reseeded at will and a destructive migration is acceptable where it is the cleanest fix. **After launch:** every schema change follows **expand → backfill → migrate the code → contract**, one phase per production deploy, the next merging only once the previous one is live in production. Expand means add, never alter — new columns nullable, a rename is an add plus a later drop, a type change is a new column rather than a cast. Backfill only where the value already exists in another shape (a rename, a type change, a split column, a value derivable from data the record already carries), as a single re-runnable statement scoped `WHERE <column> IS NULL`, shipped as its own migration file, or as a batched background job where it could outlast the deploy's migration step — never as an endpoint, never run by hand. **Never fabricate a value for rows that never supplied one**, and never add a NOT NULL constraint old rows could only satisfy by invention; leave the column nullable, document that NULL means *not collected*, and handle it at each read site. Code rolls back; schema rolls forward — a down migration does not restore dropped data, so expand/contract is the rollback plan.
-- A reseeded staging does not test a migration: it empties the table before the migration runs, then refills it with rows that already carry the new column. Once production is live, verify each migration against a restored production snapshot before promoting it, and state its expected lock behaviour at production volume.
-- Anything touching identity, ownership, tenancy, primary keys, or aggregate boundaries is not a call to make inside a bug fix. **Raise it with me first.**
-
-**Scope and consistency**
-
-- Follow the existing patterns and conventions of the module you are working in. Do not introduce a new pattern for something the codebase already solves.
-- Keep diffs minimal and surgical. Touch only files related to the issue being resolved — no drive-by refactors.
-- Do not add dependencies or external services outside `tech-stack` without asking me first. If a fix cannot be made without one — or if a service we already use cannot do what the fix needs — say which requirement it fails and wait for my decision. A cheaper or more modern alternative is not a reason to swap a working integration during a fix.
-- Flag uncertainty and ask rather than guessing at intent.
-
-**Environment configuration and infra**
-
-- If a fix changes anything about how an environment is provisioned, configured, or deployed — a new env variable a deployed environment must carry, a change to the deployment steps, a new or reconfigured infra service — update the corresponding doc in `{{INFRA_DOCS_PATH}}` so the environments can still be set up start to finish from those docs alone.
-- If a fix requires new console-side setup on my part — provider dashboard steps, infra provisioning, credential generation — **offer to walk me through it live**, one step at a time against the updated guide, waiting for my confirmation before each next step, folding any console discrepancy I report back into the guide, with secrets going directly into `.env` (never the chat) and the result verified by exercising the integration. If I decline, the updated guide stands on its own.
-- Third-party credentials follow the project's established convention: local dev and staging share the same external accounts and env values; production has its own separate live credentials. A fix must not break that separation.
-
-**Performance**
-
-- No N+1 queries in list endpoints. Flag any new query placed inside a loop.
-
-**Background work — system actions that aren't request-triggered**
-
-Some fixes touch work that no client request triggers: expiries, reminders, scheduled settlement, cleanup, third-party webhook handlers. These are as much a part of a flow as its endpoints, and are easy to miss because no screen calls them.
-
-- When validating an issue, check whether the failing behavior belongs to a background job rather than an endpoint. A flow that "doesn't complete" is often a job that never ran, ran twice, or ran against the wrong records.
-- Any job you build or modify must be **state-derived** (query records whose condition has passed, never records created exactly N hours ago), **idempotent** (running twice is a no-op), hold **no business logic in the handler** (it calls a service method), and be **dispatchable by its job name** through the single protected job-dispatcher dev-tool endpoint, so it can be curl-verified and e2e-tested. The dispatcher fails loudly on an unknown job name and returns what the run did. Inbound webhooks are excluded from the dispatcher — they are signature-verified endpoints exercised through their own path.
-- Record every job added, modified, or removed in the **background jobs registry**, with its job name (the dispatcher key), trigger type, trigger detail (schedule, event, or delay basis), selection criteria (the state it queries for), idempotency key, and retry/failure behavior.
-- If a fix introduces a new job, or widens an existing job's selection criteria, against a live production, its next tick matches every record that has built up in the newly targeted state — nothing has ever drained them, and staging cannot show this since its data is a seed file. State what it will select and, if the volume warrants, bound it in the job's own query: a batch limit where the backlog should be processed gradually, or a permanent cutoff where it should not be processed at all. Both live in the code and need no action once deployed.
-
-**Inbound webhooks are registered twice.** A webhook handler is both a real endpoint and system-triggered work, so it gets an entry in **both** registries, cross-referenced:
-
-- In the endpoint & access-control registry, with access expressed as *signature-verified third party* rather than a user role. An endpoint no screen calls and no role owns is the one most likely to end up unauthenticated — listing it is what prevents that.
-- In the **background jobs registry**, with its provider, callback path, idempotency key, and retry behavior.
-
-Verify the signature on every inbound call, treat the payload as untrusted input, expect duplicate deliveries, and never trust payload contents over your own persisted state.
-
-**API compatibility**
-
-Classify every change you make to an endpoint the client already integrates:
-
-- **Additive (safe):** new endpoint, new optional request field, new response field, new enum value.
-- **Breaking:** removing or renaming a field or endpoint, changing a type, making an optional field required, changing status or error codes, tightening validation, changing default pagination or sort.
-
-How a breaking change is handled depends on the client type (`{{CLIENT_TYPE}}`):
-
-- **Store-distributed or installed clients** (mobile app, desktop app, etc.): **before the client's first store release**, breaking changes are acceptable — they just have to reach the handoff message. **After it**, a breaking change strands users on older builds who cannot update instantly. Take the deprecation path instead: add the new field while keeping the old one populated, bridging it inside the existing endpoint rather than duplicating the endpoint where that is possible, and record the old one in the **deprecations register**, status `deprecated`. Store approval is not the removal gate — a release being approved means it is available, not installed. The old shape goes only once the minimum supported version for that platform has been raised above the builds that read it and requests from those builds have stopped, which belongs in the next build session's plan (a feature area in the first phase, a feature in later phases) rather than a fix. If a fix cannot be made without a breaking change, **raise it with me before implementing it** — that is a release-planning decision, not a bug-fix decision.
-- **Web-only clients**: no stranded builds, so no deprecation ceremony — but a breaking change is a *coordination* requirement: it must ship in step with the client deploy, or the backend must briefly tolerate both shapes across the deploy window (long-lived open tabs still call the old shape until refreshed). Flag every breaking change in the handoff message either way.
+- **Diffs are minimal and surgical.** Touch only files related to the issue being resolved — no drive-by refactors, and no new pattern for something the codebase already solves.
+- **For each business rule you implement or change,** state which rule in the business rules doc it enforces, and where in the code it is enforced.
+- **A fix changes no settled structure.** Aggregate boundaries, the identity model, tenancy, key strategy, soft-delete and audit conventions are decisions the build process owns — raise them with me first. The same for anything that would change `backend-architecture`.
+- **A breaking change is never a bug-fix decision.** If a fix cannot be made without one, stop and raise it before implementing.
+- **No dependency or external service outside `tech-stack`** without asking. If a service we use cannot do what the fix needs, say which requirement it fails and wait; cheaper or more modern is not a reason to swap a working integration during a fix.
+- **If a fix changes environment setup, deployment or a provider-side configuration,** update the infra docs in `{{INFRA_DOCS_PATH}}` or that service's setup guide so the environments can still be built from the docs alone, and offer to walk me through any console steps live — secrets go into `.env`, never the chat, and the result is verified by exercising the integration.
+- **Flag uncertainty and ask** rather than guessing at intent.
 
 ### 2.2 — Documentation & Rules-File Writing Rules
 
@@ -161,6 +93,7 @@ Endpoints and business logic are built in batches. In the first phase, **one fea
 | **Seed data** | The server seed file | Seed users and data for easily testing all built feature areas' flows and endpoints. Must be updated every time a feature area is built or updated. |
 | **API doc** | `api-docs-{{feature-area}}` | The client dev's **primary integration reference**. Organized by feature area; contains all endpoints needed by that area's flows and screens, plus everything needed to integrate them properly. |
 | **API testing doc** | `api-testing-{{feature-area}}` | Guides the backend or client dev in testing each feature area's endpoints and flows, against either the local base URL or the staging base URL. |
+| **Integration handoff** | `docs/integration-handoff/backend-issues-{client}.md` | One file per client, written in the client repo and delivered by its docs sync. Each entry an issue that client is blocked on, status `open`. This skill appends each fix's resolution (status `deployed`); the client flips it to `verified` once rewired, and archives a phase's entries to `backend-issues-{client}-resolved.md` when all are verified. The backend never edits a client's entries — it only appends resolutions. |
 | **Infra docs** | `{{INFRA_DOCS_PATH}}` (e.g. `docs/infra/`) | Provisioning, configuration, and deployment of the staging and production environments. Consulted to understand the environment setup; updated whenever a fix changes it. |
 | **External-integration guides** | `{{DOCS_DIR}}external-integrations/` | One setup guide per third-party service, covering provider-side setup, credentials, and env variables. Updated if a fix changes an integration's setup or configuration. |
 
@@ -177,7 +110,7 @@ Seed users and data exist so any flow or endpoint can be tested without building
 
 ## 4. Per-Issue Workflow
 
-Apply these seven steps to **every** issue I send.
+Apply these seven steps to **every** issue, whether I send it in chat or it arrives as an `open` entry in a handoff file.
 
 ### Step 1 — Validate the issue
 
@@ -305,6 +238,8 @@ After I confirm the staging reseed succeeded:
 
 Afterwards, I will reseed staging again to return it to a stable state for the client developers to continue integration.
 
+Then, for every resolved issue that came from a handoff file, append a resolution line under its entry — the date, one line on what changed, and the endpoints by method and full path — and set its **Status:** to `deployed`. The client's next `docs:pull` collects it.
+
 ---
 
 ## 8. Phase D — Final Deliverables
@@ -341,11 +276,11 @@ A single message addressed to **both** the `{{CLIENT_TEAM_NAME}}` developers and
     - **Integration references** — the API doc and API testing doc (what to build against and test with).
     - **Context references** — the flows doc, business rules, screen specs, and any others (context on the app's flows, rules, and screens, and how the backend behaves).
 - Give a one-line note per file on what changed in it and why it matters to them.
-- State clearly that **these files have already been updated on the `main` branch of the client codebase** — the outdated copies were replaced with the current backend versions — so they should pull `main` and work from those.
+- State that these files are updated in this repo's `docs/`, and that the client repo collects them with its docs sync (`pnpm docs:pull`) — nothing is copied by hand.
 
 ### 8.2 — File list for me
 
-Separately from the handoff message, give me a plain checklist of **every** doc file updated or touched across this session that is relevant to the client codebase, **with its path in the backend repo**, so I can copy each one over and replace the outdated version in the client repo's `main` branch before I hand the message to the client developers.
+Separately from the handoff message, give me a plain checklist of **every** doc file updated across this session that is relevant to the client codebase, **with its path in this repo**, so I can confirm the client repo's next `docs:pull` brought each one over before I hand the message to the client developers.
 
 ---
 
@@ -374,7 +309,7 @@ A bug found in live production is still fixed through the full workflow above �
 
 Before the first issue, in a few lines:
 
-1. **State the project values** you read from `CLAUDE.md` that change what you do: production status, client type, client release status, and the scope in play. Ask for any that are missing.
-2. **Ask for the issues** if I haven't already given them. Some I found myself; some the client developers found while integrating and handed to me to resolve.
+1. **State the project values** you read from `CLAUDE.md` that change what you do: production status, client type, and client release status. Ask for any that are missing. I state the scope in play, and anything deferred, alongside the issues.
+2. **Collect the issues.** Read every `docs/integration-handoff/backend-issues-*.md` and list its `open` entries, then ask for any further issues if I haven't already given them. Some I find myself and give in chat; the rest arrive through the handoff files.
 
 Then work through them one at a time per Section 4. Do not summarise the workflow back to me — start it.

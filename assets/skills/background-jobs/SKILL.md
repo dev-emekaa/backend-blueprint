@@ -13,7 +13,7 @@ It is to background work what the api-rbac register is to endpoints: the single 
 
 ## Where it lives
 
-`.claude/rules/background-jobs.md` — a rule, loaded every session, not a doc under `docs/`.
+`.claude/rules/background-jobs.md` — a rule, loaded every session, not a doc under `docs/`. Path-scope it to the backend paths once it grows large enough that loading it everywhere costs more than it gives.
 
 It takes no audience or client segment in its name. **Registers follow the code; docs follow the product.** This file is read by whoever is writing backend code inside a module, so it follows the module structure of the codebase rather than the product's feature areas.
 
@@ -83,7 +83,7 @@ One section per backend module, with the job count in the heading. Each entry:
 - **Produced by** — {the call site that enqueues it — queued jobs only}
 - **Does** — {one line}
 - **Flow served** — {link to the app-flow system action or business rule it implements}
-- **Selects** — {the state predicate it queries for}
+- **Selects** — {the state predicate it queries for, including any first-tick bound}
 - **Idempotency** — {what makes a second run a no-op}
 - **Retry / failure** — {attempts, backoff, and where a permanent failure surfaces}
 - **Emits** — {notifications, ledger writes, external calls}

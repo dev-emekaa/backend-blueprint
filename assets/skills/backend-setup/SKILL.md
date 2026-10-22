@@ -111,6 +111,7 @@ Write `docs/infra/infra-setup.md`: every step only I can do, numbered, so stagin
   - the `staging` and `production` environments, restricted to `main` with administrator bypass off, holding the deploy secrets
   - secret scanning with push protection
 - **Elsewhere:**
+  - the production smoke account: once the auth area is live in production, created by hand (production is never seeded) with the lowest-privilege role, its credentials into the production deploy environment; staging's comes from the seed
   - the Sentry projects, with an uptime monitor on `/health`
   - the email provider, with SPF, DKIM and DMARC on the sending domain
   - DNS

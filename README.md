@@ -116,7 +116,7 @@ PRD
 
 `/backend-issue-fix` runs whenever an issue turns up. `/api-docs`, `/api-testing`, `/api-rbac` and `/background-jobs` are written *by* a build session — invoke them directly only to set up, audit or repair those files.
 
-**Later phases** start with `/feature-requirements`, which turns the phase's feature ideas into its FRD. Then `/phase-review` for the whole phase, then `/backend-build` once per **feature**, in `implementation-order.md` order.
+**Later phases** start with `/feature-requirements`, which turns the phase's feature ideas into its FRD. Then `/phase-review` for the whole phase — it writes the phase's business rules, flows and specs where the founder supplied none, through the type skills' later-phase modes, and audits them — then `/backend-build` once per **feature**, in `implementation-order.md` order.
 
 ---
 
@@ -164,7 +164,7 @@ Runs one feature area or feature per session by default, or a whole phase in one
 
 ### `/backend-issue-fix`
 **Resolve a backend or API issue.**
-Confirms it's real against the code *and* the docs, updates whatever docs the fix touches, reproduces it with a failing test, fixes the code, updates seed and tests, verifies with curl on dev then staging, and produces a client handoff plus the list of doc files to copy over. Knows that aggregate boundaries and the identity model are not decisions to make inside a fix.
+Confirms it's real against the code *and* the docs, updates whatever docs the fix touches, reproduces it with a failing test, fixes the code, updates seed and tests, verifies with curl on dev then staging, and produces a client handoff; the updated docs reach the client repo through its docs sync, and each handoff-file entry gets its resolution appended. Knows that aggregate boundaries and the identity model are not decisions to make inside a fix.
 **Reads** the issue, the code, the area's docs · **Writes** the fix, doc updates, handoff
 
 ### `/api-docs`
@@ -262,6 +262,6 @@ The zip appears under the release's **Assets** as `backend-blueprint-v1.1.0.zip`
 
 ---
 
-`prompts/` holds the pre-skill versions of nine of the skills: same content, but carrying the paste-era intros and `{PLACEHOLDER}` blocks from when they were pasted into a chat rather than invoked. Useful if you want to run the workflow outside Claude Code. For Claude Code, the skills are the maintained copies.
+`prompts/` holds the pre-skill versions of nine of the skills, frozen as they were in the paste-into-a-chat era, with its intros and `{PLACEHOLDER}` blocks. Useful if you want to run the workflow outside Claude Code — but the skills are the maintained copies and have moved on (above all, the prompts predate the client-pairing handoff files and still describe copying docs by hand).
 
 **Requires** Node 18 or later, and Claude Code. **License** proprietary — all rights reserved.

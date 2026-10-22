@@ -98,6 +98,7 @@ This is the rule most often broken, and it degrades the whole process rather tha
 
 - Services raise **domain exceptions** — a small hierarchy from one base class — and a FastAPI exception handler translates them to status codes at the boundary. The service layer stays free of HTTP.
 - Pick the status by meaning: absent record is 404, failed authentication is 401, authenticated but not permitted is 403, valid request against a state that forbids it is 409.
+- **Every error response carries a stable machine code** alongside the HTTP status: a SCREAMING_SNAKE string per distinct failure (`INVOICE_ALREADY_PAID`), set where the domain exception is raised and never renamed once documented — clients switch on it. Validation failures also carry `fieldErrors`, keyed by field path. The exception handler shapes every error body the same way (`code`, `message`, `fieldErrors?`), and `api-docs-conventions` documents the envelope once.
 - The message says what the caller got wrong, in terms the caller can act on. It never contains a query, a traceback, an internal identifier, or the existence of a record the caller may not see.
 - Never `except Exception: pass`. Catch the exception you can handle, and let the rest reach the handler.
 

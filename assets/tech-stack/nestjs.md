@@ -14,7 +14,7 @@ The technologies this backend uses. Use the current stable release of each; the 
 | Auth | `@nestjs/jwt` and `@nestjs/passport` for access tokens · `argon2` for password hashing · `openid-client` for social sign-in, with `jose` verifying identity tokens · `otpauth` for MFA codes · `@simplewebauthn/server` for passkeys, where the product uses them |
 | Cache | Redis through `ioredis` |
 | Rate limiting | `@nestjs/throttler` with Redis storage (`@nest-lab/throttler-storage-redis`) |
-| Background jobs | BullMQ through `@nestjs/bullmq` — queued, delayed and event-driven jobs, and scheduled jobs through BullMQ job schedulers. Not `@nestjs/schedule`: it runs every cron in every instance, so a second instance runs each job twice. |
+| Background jobs | BullMQ through `@nestjs/bullmq` — queued, delayed and event-driven jobs, and scheduled jobs through BullMQ job schedulers. Not `@nestjs/schedule`: it runs every cron in every instance, so a second instance runs each job twice. Job schedulers run inside the workers, so there is no separate scheduler process. |
 | Real-time | SSE through NestJS `@Sse()` for one-way streams · WebSockets through `@nestjs/websockets` with Socket.IO for two-way, plus `@socket.io/redis-adapter` so events reach clients connected to any instance |
 | Security headers | `helmet` |
 | Image processing | `sharp`, in workers only |

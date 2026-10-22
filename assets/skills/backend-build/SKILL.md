@@ -98,7 +98,7 @@ Follow these files as written. This prompt does not restate them.
 
 | Artifact | What it is | Updated when |
 | --- | --- | --- |
-| `schema` | Every entity, enum, and relationship in the database. Designed globally once in Phase 0 from the `prd` plus **all** areas' business rules, app flows, and screen specs; migrated incrementally per area thereafter. | Phase 0 for the design; per area for migrations. |
+| `schema` | `docs/schema.md` — every entity, enum, relationship, ownership chain and aggregate boundary, with the locked decisions marked. Designed globally once in Phase 0 from the `prd` plus **all** areas' business rules, app flows, and screen specs; migrated incrementally per area thereafter. | Phase 0 writes it; each area's build updates it as its migrations realise or extend the design. |
 | `backend-architecture` | The module index — one row per module, naming its aggregate root or marking it infrastructure, plus one line on what it owns — and the cross-module rules: which module may call which, in which direction, and when it is a direct call rather than a domain event. Domain modules are derived from the schema's aggregate roots; infrastructure modules own no aggregate and appear nowhere else. Lives in `.claude/rules/backend-architecture.md`, so it loads every session. Layering conventions stay in `coding-standards`. | Phase 0 for the initial index and rules; whenever a build introduces a new aggregate root. |
 | `api-rbac` | Every endpoint in the app, grouped under its backend module (aggregate root). Each endpoint lists, per user role, whether access is granted, denied, or **conditional** — and on what condition. Starts empty and grows with the build. | Any endpoint built, modified, or removed. |
 | `background-jobs` | Every piece of background work in the app — scheduled, event-driven, delayed, and inbound-webhook handlers — grouped under its backend module. The `api-rbac` of work that isn't request-triggered. Entry format follows the Background Jobs skill. Starts empty and grows with the build. | Any background job built, modified, or removed. |
@@ -112,21 +112,7 @@ Follow these files as written. This prompt does not restate them.
 | Third-party setup guide | One per external service integrated. Lives in `{{DOCS_DIR}}external-integrations/`. | A third-party service is introduced. |
 | Infra docs | Everything related to provisioning, configuring, and deploying the **staging** and **production** environments — servers, databases, deployment pipeline, and any infra tooling — written so each environment can be set up start to finish by following them. The primary file is the `infra-setup` doc; any further infra docs live alongside it. All live in `{{DOCS_DIR}}infra/`. Local dev is **not** covered — it is fully derivable from `tech-stack`, `.env.example`, and the dev server and reseed commands. | Infra is first set up or changed; a feature area introduces a new infra requirement (queue, scheduler, storage bucket, public callback URL, etc.). |
 
-**Register template** *(store-distributed or installed clients only)* — the `deprecations` file opens with this block:
-
-````markdown
-# Deprecations
-
-> **What this is:** everything kept alive only so already-released client builds keep working. Without this register nothing ever gets deleted, because nobody can prove what still reads it.
-> **Add an entry** when a breaking change lands after the first store release — whatever caused it: a phase feature, an issue fix, or any other update.
-> **Statuses:** `deprecated` — released builds may still read it · `removable` — the minimum supported version has been raised above every build that reads it and those builds have stopped calling, so nothing can reach it.
-> **Remove an entry** when the thing itself is deleted, in a build session. Git keeps the history.
-> **Graduating to `removable`:** follow the graduation steps in the backend building skill. Never mark an entry `removable` from request counts alone.
-
-| What | Kind | Replaced by | Deprecated on | Status |
-| --- | --- | --- | --- | --- |
-| {named precisely enough to find — field plus its endpoint, full path, enum value plus its field, table.column} | field \| endpoint \| enum value \| column | {replacement, or none} | {YYYY-MM-DD} | deprecated |
-````
+**Register template** *(store-distributed or installed clients only)* — the installed `.claude/rules/deprecations.md` carries the register's header and entry format; builds only add rows, flip statuses, and delete rows with the thing they describe.
 
 **When a `deprecations` entry becomes `removable`** *(store-distributed or installed clients only)*
 
@@ -273,7 +259,7 @@ Read the `prd` plus **every** feature area's `app-flow`, `business-rules`, and `
 
 Design to **entity-and-relationship depth, not column depth.** Exhaustive columns for areas you haven't built yet is speculation; the structure between entities is not.
 
-Present this design and **wait for my approval** before any migration is written.
+Present this design and **wait for my approval**, then write it to `docs/schema.md` — entities and relationships, ownership chains, enums, aggregate boundaries, with the Section 4.2 locked decisions marked as locked. Every later session reads the design from that file, and no migration is written before it exists.
 
 ### 4.2 — Lock early vs. leave loose
 
@@ -338,6 +324,7 @@ The global design from Phase 0 is the reference. This step is **physical migrati
 - **If this area needs something the global design didn't anticipate, or contradicts it, stop and raise it with me before applying.** Small additions inside an existing entity are fine; anything touching a locked decision from Section 4.2 is not a per-area call.
 - Migrations follow the schema-change rules in Section 3 for the current `{{PROD_STATUS}}`: additive where possible, forward-only, and safe to apply to an environment with existing data. Assume the change will eventually ship to a live production database.
 - After launch, if a change cannot be made non-destructively, raise it with me before making it.
+- Update `docs/schema.md` in the same step, where this area's migrations realise part of the design or extend it: the file always matches what is migrated plus the approved design for what isn't.
 - If this build introduces a new aggregate root, add its module to `backend-architecture` in the same step as the migration. A module with no row there has no defined home for its endpoints, and it would still be a section in `api-rbac` and `background-jobs` that nothing names.
 
 ### Step 4 — Implement endpoints and business logic
@@ -379,6 +366,7 @@ Written so I can follow it start to finish without prior knowledge of that provi
 
 - **Server seed file** — add realistic users and data covering every flow in this area, happy and error paths, aligned with the schema, flows, and rules. A dev should be able to exercise any flow in the area without creating a user from scratch.
 - **Pre-job states** — include records sitting in the states this area's background jobs act on (pending expiry, awaiting reminder, ready to settle), so every job has something to operate on when triggered — and near-boundary records the job must **not** act on (e.g. a match due tomorrow next to one overdue), so the untouched side of its selection criteria can be asserted.
+- **Seed email addresses belong to a domain the team controls** (one catch-all inbox), so a flow that emails a code or link can be completed on staging, where the provider is real; locally Mailpit captures them regardless.
 - **E2E factories/fixtures** — updated separately, for the e2e suite only. Keep the two independent.
 - **Reseed dev-tool endpoint** — a protected dev-tool endpoint that clears the staging datastores and reloads the seed data must exist from the first area built; deploy and client-side testing depend on it. Build it once, keep it working as the seed grows.
 - Remove seed data this area's work has made obsolete.
@@ -501,7 +489,7 @@ A build is not done until all of the following are true:
 - [ ]  Every endpoint is in `api-rbac` with correct per-role access. Inbound webhooks appear in both `api-rbac` and `background-jobs`, signature-verified.
 - [ ]  Every API change is classified additive / breaking / deprecation.
 - [ ]  If the client has shipped a store release: anything deprecated rather than deleted is in `deprecations`, and anything marked `removable` was removed in this build — code and register entry both.
-- [ ]  Schema migrations follow Section 3's rules for the current production status, conforming to the Phase 0 global design.
+- [ ]  Schema migrations follow Section 3's rules for the current production status, conforming to the Phase 0 global design, and `docs/schema.md` reflects them.
 - [ ]  Server seed data lets every flow in the area be exercised end to end.
 - [ ]  E2E factories updated, separate from the server seed.
 - [ ]  Unit and e2e suites pass — this area's and every previously built area's.

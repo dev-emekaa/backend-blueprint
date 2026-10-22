@@ -33,6 +33,8 @@ Three files record what exists in the **code** rather than what the product does
 
 **Registers follow the code; docs follow the product.** They are organised by backend module, not by feature area, and take no audience or client segment in their names. Each one's entry format lives in its own skill.
 
+**The integration handoff is the one doc clients write.** `docs/integration-handoff/` holds one `backend-issues-{client}.md` per client (plus its `-resolved` archive): issues that client hit while integrating, written in the client repo and delivered into this one by its docs sync. The backend issue-fix process appends each fix's resolution, setting the entry `deployed`; the client verifies and archives. The backend never edits a client's entries, only appends.
+
 **`docs/` is what leaves the backend; `.claude/rules/` is what stays.** Business rules, app flows, screen specs, api-docs and api-testing travel to the client repo and are read by the client developer. The registers, the schema, the architecture index and the standards have no client reader.
 
 ## Phases
@@ -80,7 +82,7 @@ A change to an existing area goes with the feature that causes it:
 Three values, wherever readiness is tracked:
 
 - `Draft` — its context docs are not final: not written yet, written but not yet reviewed, or reviewed with issues still open. Never build from it.
-- `Ready` — business rules, app flow and screen specs written, reviewed, and nothing outstanding — frontend actions already applied to the specs don't count; safe to build.
+- `Ready` — business rules, app flow and screen specs written, reviewed, and nothing outstanding (an action already applied to the specs is not outstanding); safe to build.
 - `Built` — endpoints, jobs, tests and API docs done, and in a later phase the phase entries promoted.
 
 **The review covers every context source** — the requirements doc, the business rules, the app flow, the screen specs, and any supporting doc supplied with them. It is what `Ready` asserts, so it is never skipped — a status nobody checked carries no information, and "never build from a `Draft` row" then protects nothing. Its depth is proportionate: an area that touches money, spans other areas, changes access or handles sensitive data earns a full pass, while a small self-contained one can be cleared by a single pass that finds nothing and records that it found nothing.

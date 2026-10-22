@@ -91,6 +91,7 @@ A module is a folder holding its own controller, service, DTOs, and job processo
 
 - Throw NestJS HTTP exceptions from the service layer: `NotFoundException`, `BadRequestException`, `UnauthorizedException`, `ForbiddenException`, `ConflictException`. Never a bare `Error`.
 - Pick the type by meaning: absent record is `NotFound`, failed authentication is `Unauthorized`, authenticated but not permitted is `Forbidden`, valid request against a state that forbids it is `Conflict`.
+- **Every error response carries a stable machine code** alongside the HTTP status: a SCREAMING_SNAKE string per distinct failure (`INVOICE_ALREADY_PAID`), set when the exception is thrown and never renamed once documented — clients switch on it. Validation failures also carry `fieldErrors`, keyed by field path. One exception filter shapes every error body the same way (`code`, `message`, `fieldErrors?`), and `api-docs-conventions` documents the envelope once.
 - The message says what the caller got wrong, in terms the caller can act on. It never contains a query, a stack trace, an internal identifier, or the existence of a record the caller may not see.
 - Catch only to add meaning or to recover. A catch that logs and rethrows unchanged adds a line and no information.
 

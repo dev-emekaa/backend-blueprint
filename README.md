@@ -197,7 +197,7 @@ These install into `.claude/rules/`, which Claude Code loads at the start of eve
 Universal and project-agnostic. Defines audience and client, the canonical folder structure and filenames, the phase folder layout, how a phase entry is tagged and pointed at, where a change to an existing area is routed, the three readiness values, and the registers. It is the single source for anything more than one skill must agree on.
 
 ### `tech-stack.md`
-The tools this backend uses, and the services each environment runs on — Railway or AWS hosting, R2 + Cloudflare or S3 + CloudFront for media, SES or Resend for email over SMTP, Stripe or Paystack and the app stores for payments. Built by the installer from the stack you picked plus the shared services file. Anything not listed is proposed in a build plan and approved before it is added.
+The tools this backend uses, and the services each environment runs on — Railway or AWS hosting, R2 + Cloudflare or S3 + CloudFront for media, SES or Resend for email over SMTP, Stripe or Paystack and the app stores for payments, push and link files where a mobile client exists. Built by the installer from the stack you picked plus the shared services file. Anything not listed is proposed in a build plan and approved before it is added.
 
 ### `coding-standards.md`
 How code is written, for the stack you picked: layering, validation, database rules, atomic counters, Decimal money, UTC, errors, logging, caching and performance, and how tests are set up in that stack. Where a rule touches security or testing, it gives the mechanism in this stack; the policy lives in those files.
@@ -254,11 +254,11 @@ It writes `dist/backend-blueprint/` and `dist/backend-blueprint-v{version}.zip`,
 Every release is a version tag. Pushing one builds the zip and publishes it on the repo's **Releases** page:
 
 ```bash
-npm version minor        # bumps package.json, commits, and tags v1.1.0 (patch · minor · major)
+npm version minor        # bumps package.json, commits, and tags v1.3.0 (patch · minor · major)
 git push --follow-tags   # pushes the commit and the tag
 ```
 
-The zip appears under the release's **Assets** as `backend-blueprint-v1.1.0.zip` — that is the file to share. The **Source code** archives GitHub adds to every release are the repo itself, not the folder version. A tag that doesn't match the `package.json` version fails the build, so the zip's name always matches its contents.
+The zip appears under the release's **Assets** as `backend-blueprint-v1.3.0.zip` — that is the file to share. The **Source code** archives GitHub adds to every release are the repo itself, not the folder version. A tag that doesn't match the `package.json` version fails the build, so the zip's name always matches its contents.
 
 ---
 

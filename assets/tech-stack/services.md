@@ -12,6 +12,7 @@ The same whatever the language. Hosting, the pipelines and the infrastructure ea
 | Error tracking | — | Sentry, `staging` environment | Sentry, `production` environment |
 | Logs, metrics, alerts | Console | The host's (Railway, or CloudWatch on AWS) | Same |
 | CI/CD · image registry | — | GitHub Actions · GHCR | Same |
+| Push notifications *(mobile client)* | — | Expo's push service for an Expo app, otherwise FCM and APNs directly; staging credentials | Same, production credentials |
 
 **Sentry** also monitors `/health` for downtime and runs a cron monitor for every scheduled job, so a job that stops running raises an alert instead of going silent.
 
@@ -30,6 +31,15 @@ The same whatever the language. Hosting, the pipelines and the infrastructure ea
      - **Private media** — only through short-lived signed URLs, never through the CDN.
 - **R2 presigned URLs use the S3 API endpoint**, not the custom media domain.
 - **Security rules** are in `security` → Media and CDN.
+
+### Mobile clients
+
+Where a mobile client exists (`CLAUDE.md` → Client(s) integrating):
+
+- **Push notifications.** The backend stores each device's push token against its session — registered after sign-in, removed on sign-out and when the provider reports the token invalid — and sends through Expo's push service for an Expo app (one API for both platforms; the APNs key and FCM credentials live in the app's EAS project) or directly through FCM and APNs otherwise. A notification carries a route and ids, never personal data; the app fetches what it shows.
+- **Universal and app links** are verified against `.well-known/apple-app-site-association` and `.well-known/assetlinks.json` on the product's web domain. The web client serves them where one exists; otherwise this backend serves them on the links domain. Either way they carry the mobile client's identifiers, and `CLAUDE.md` records who serves them.
+- **Account deletion is an endpoint**, because the stores require deletion from inside the app: behind re-authentication (`security` → Authentication and sessions), deleting or anonymising as `security` → Personal data says, audit-logged.
+- **The minimum-supported-version endpoint** is in the build rule's deprecation section.
 
 ### Payments
 

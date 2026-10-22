@@ -43,4 +43,6 @@
 | Client release status | |
 | Client team | who integrates, and where they work from |
 | Minimum-supported-version endpoint | store-distributed or installed clients only |
+| Push provider | Expo's push service · FCM and APNs — mobile client only |
+| Link files served by | the web client · this backend — mobile client only |
 | Repo layout note | monorepo or anything else worth knowing |

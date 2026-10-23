@@ -45,4 +45,5 @@
 | Minimum-supported-version endpoint | store-distributed or installed clients only |
 | Push provider | Expo's push service · FCM and APNs — mobile client only |
 | Link files served by | the web client · this backend — mobile client only |
+| Download page served by | the web client · this backend — desktop client only |
 | Repo layout note | monorepo or anything else worth knowing |

@@ -32,14 +32,15 @@ The same whatever the language. Hosting, the pipelines and the infrastructure ea
 - **R2 presigned URLs use the S3 API endpoint**, not the custom media domain.
 - **Security rules** are in `security` → Media and CDN.
 
-### Mobile clients
+### Mobile and desktop clients
 
-Where a mobile client exists (`CLAUDE.md` → Client(s) integrating):
+Where an installed client exists (`CLAUDE.md` → Client(s) integrating):
 
-- **Push notifications.** The backend stores each device's push token against its session — registered after sign-in, removed on sign-out and when the provider reports the token invalid — and sends through Expo's push service for an Expo app (one API for both platforms; the APNs key and FCM credentials live in the app's EAS project) or directly through FCM and APNs otherwise. A notification carries a route and ids, never personal data; the app fetches what it shows.
-- **Universal and app links** are verified against `.well-known/apple-app-site-association` and `.well-known/assetlinks.json` on the product's web domain. The web client serves them where one exists; otherwise this backend serves them on the links domain. Either way they carry the mobile client's identifiers, and `CLAUDE.md` records who serves them.
-- **Account deletion is an endpoint**, because the stores require deletion from inside the app: behind re-authentication (`security` → Authentication and sessions), deleting or anonymising as `security` → Personal data says, audit-logged. Play also requires a deletion-request page on the product's web domain; the web client serves it where one exists, otherwise this backend does, beside the link files.
-- **The minimum-supported-version endpoint** is in the build rule's deprecation section.
+- **Push notifications** *(mobile)*. The backend stores each device's push token against its session — registered after sign-in, removed on sign-out and when the provider reports the token invalid — and sends through Expo's push service for an Expo app (one API for both platforms; the APNs key and FCM credentials live in the app's EAS project) or directly through FCM and APNs otherwise. A notification carries a route and ids, never personal data; the app fetches what it shows.
+- **Universal and app links** *(mobile)* are verified against `.well-known/apple-app-site-association` and `.well-known/assetlinks.json` on the product's web domain. The web client serves them where one exists; otherwise this backend serves them on the links domain. Either way they carry the mobile client's identifiers, and `CLAUDE.md` records who serves them.
+- **Account deletion is an endpoint**, because the stores require deletion from inside the app, and the desktop client offers it the same way: behind re-authentication (`security` → Authentication and sessions), deleting or anonymising as `security` → Personal data says, audit-logged. Play also requires a deletion-request page on the product's web domain; the web client serves it where one exists, otherwise this backend does, beside the link files.
+- **The desktop download page** *(desktop)* lives on the product's web domain — served by the web client where one exists, otherwise by this backend, beside the link files — with one installer link per platform and architecture, read from the `downloads.json` the desktop client's production pipeline writes next to its update feed, so a release needs no deploy here. It is where the force-update response sends a desktop client, since there is no store page; `CLAUDE.md` records who serves it. The desktop client's custom URL scheme is registered by the client itself; this backend only redirects to it at the end of the sign-in flow `security` → Authentication and sessions describes.
+- **The minimum-supported-version endpoint** is in the build rule's deprecation section, held per platform: `ios`, `android`, `macos`, `windows`, `linux`.
 
 ### Payments
 

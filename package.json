@@ -1,6 +1,6 @@
 {
   "name": "backend-blueprint",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Spec-to-ship backend workflow for Claude Code — the docs come first, and every endpoint traces back to them.",
   "type": "module",

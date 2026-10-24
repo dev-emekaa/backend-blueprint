@@ -32,7 +32,7 @@ The same whatever the language. Hosting, the pipelines and the infrastructure ea
 - **R2 presigned URLs use the S3 API endpoint**, not the custom media domain.
 - **Security rules** are in `security` → Media and CDN.
 
-### Mobile and desktop clients
+### Mobile, desktop and extension clients
 
 Where an installed client exists (`CLAUDE.md` → Client(s) integrating):
 
@@ -40,7 +40,8 @@ Where an installed client exists (`CLAUDE.md` → Client(s) integrating):
 - **Universal and app links** *(mobile)* are verified against `.well-known/apple-app-site-association` and `.well-known/assetlinks.json` on the product's web domain. The web client serves them where one exists; otherwise this backend serves them on the links domain. Either way they carry the mobile client's identifiers, and `CLAUDE.md` records who serves them.
 - **Account deletion is an endpoint**, because the stores require deletion from inside the app, and the desktop client offers it the same way: behind re-authentication (`security` → Authentication and sessions), deleting or anonymising as `security` → Personal data says, audit-logged. Play also requires a deletion-request page on the product's web domain; the web client serves it where one exists, otherwise this backend does, beside the link files.
 - **The desktop download page** *(desktop)* lives on the product's web domain — served by the web client where one exists, otherwise by this backend, beside the link files — with one installer link per platform and architecture, read from the `downloads.json` the desktop client's production pipeline writes next to its update feed, so a release needs no deploy here. It is where the force-update response sends a desktop client, since there is no store page; `CLAUDE.md` records who serves it. The desktop client's custom URL scheme is registered by the client itself; this backend only redirects to it at the end of the sign-in flow `security` → Authentication and sessions describes.
-- **The minimum-supported-version endpoint** is in the build rule's deprecation section, held per platform: `ios`, `android`, `macos`, `windows`, `linux`.
+- **The extension's redirect URLs and store listings** *(extension)*. A web extension signs in through the same flow, returning to the browser's identity redirect URL, which this backend holds in its registered-redirect list per environment (`CLAUDE.md` records them). Its force-update response points at the extension's store listing for that browser, since there is no download page for it. The extension reaches this API on a bearer token from its own origin with a host permission, so the credentialed-CORS rules for the web client do not apply to it.
+- **The minimum-supported-version endpoint** is in the build rule's deprecation section, held per platform: `ios`, `android`, `macos`, `windows`, `linux`, `extension-chrome`, `extension-firefox`, `extension-edge`, `extension-safari`.
 
 ### Payments
 

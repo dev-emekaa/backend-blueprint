@@ -1,6 +1,6 @@
 # Backend Blueprint
 
-A docs-first workflow for building backends with Claude Code. Thirteen skills and the rules they follow take a product from its requirements to a tested, deployed backend — and every endpoint traces back to a reviewed document.
+Build a product's backend with Claude Code, from the product docs to a tested, deployed API. You write down what the product must do first — its feature areas, business rules, user flows and screens — and have it reviewed; then each part of the backend is built from those docs. Nothing gets built that can't be traced back to a document. Thirteen skills and the rules they follow.
 
 Two stacks are included: **NestJS · TypeScript · Prisma · PostgreSQL** and **Python · FastAPI · SQLModel · PostgreSQL**.
 

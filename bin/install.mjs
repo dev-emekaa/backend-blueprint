@@ -108,7 +108,7 @@ ${c.b('Usage')}
 
 ${c.b('Options')}
   --stack <s>       Required. ${c.dim('nestjs')} = NestJS/TypeScript/Prisma · ${c.dim('fastapi')} = Python/FastAPI/SQLModel
-  --store-client    Also install the deprecations register ${c.dim('(mobile/desktop clients only)')}
+  --store-client    Also install the deprecations register ${c.dim('(mobile, desktop or extension clients)')}
   --ai              Also install the AI services rule ${c.dim('(products with AI features)')}
   --personal        Install skills to ~/.claude/skills instead of the project
   --force           Overwrite existing files ${c.dim('(default: skip them)')}
@@ -171,7 +171,7 @@ ${c.b('Next')}
   4. Run ${c.b('/backend-setup')} once, any time before the first build — it needs no product docs.
 
   ${n} skills installed to ${c.dim(opts.personal ? '~/.claude/skills' : '.claude/skills')}${
-    opts.personal ? c.y('\n  Note: personal skills are not read by cloud sessions, routines or Cowork.') : ''}
+    opts.personal ? c.y('\n  Note: personal skills are not read by cloud sessions or scheduled runs.') : ''}
 `);
 }
 

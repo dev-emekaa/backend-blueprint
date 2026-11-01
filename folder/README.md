@@ -69,7 +69,7 @@ Then:
 
 **Taking over an existing backend**
 
-`/backend-adopt` — once: documents the code the way these skills expect, with every fact citing its source, and lists where it departs from the rules; `/backend-setup` then fills the foundation it says is missing. Copy the `coding-standards.md` and `tech-stack.md` of the stack you would migrate to if the code isn't on one of the two — the adopt skill says whether the build skills apply. Then the project is run like any other.
+`/backend-adopt` — once: documents the code the way these skills expect, with every fact citing its source, and lists where it departs from the rules; `/backend-setup` then fills the foundation it says is missing. Copy the `coding-standards.md` and `tech-stack.md` of the stack you would migrate to if the code isn't on one of the two — the adopt skill says whether the build skills apply, and tells you if `deprecations.md` or `ai-services.md` should have been kept. Then the project is run like any other.
 
 **Fixing an issue**
 

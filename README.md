@@ -59,7 +59,7 @@ docs/
 3. Run `/feature-areas`. Everything after it reads its output.
 4. Run `/backend-setup` once, any time before the first build — it needs no product docs.
 
-**Already have a backend?** Run `/backend-adopt` instead of steps 1 and 3. It documents the existing code the way these skills expect and lists where it departs from the rules; `/backend-setup` then fills whatever foundation the report says is missing. Pass the `--stack` you would migrate to if the code isn't on one of the two — `/backend-adopt` says whether the build skills apply.
+**Already have a backend?** Run `/backend-adopt` instead of steps 1 and 3. It documents the existing code the way these skills expect and lists where it departs from the rules; `/backend-setup` then fills whatever foundation the report says is missing. Pass the `--stack` you would migrate to if the code isn't on one of the two, and add `--store-client` or `--ai` if they apply — `/backend-adopt` says whether the build skills apply and tells you when an option is missing.
 
 Commit `.claude/` with your project: cloud sessions and scheduled runs only read project skills. `--personal` is for throwaway work.
 

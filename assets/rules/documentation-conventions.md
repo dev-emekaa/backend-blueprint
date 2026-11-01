@@ -15,6 +15,7 @@ Universal and project-agnostic. Project specifics live in `CLAUDE.md`.
 
 - `docs/feature-areas.md` is the registry: every feature area in the product, what each owns, its status, and the first phase's build order. Every doc below is written per feature area, so this file is produced first and every other skill reads the division from it rather than re-deriving it.
 - `docs/` contains `business-rules/`, `app-flows/`, `screen-specs/`, `api-docs/` and `api-testing/`, with one file per feature area.
+- `docs/adoption-report.md` exists only in a project the blueprint didn't start: what `/backend-adopt` found, wrote and flagged when it arrived. The feature areas, rules and flows it reconstructed carry a `Reverse-engineered … — verify` line until approved.
 - The primary audience sits at the root of each folder; other audiences get `{audience}/` subfolders.
   - Root business rules and API docs are platform-wide and bind every audience. An audience file holds only what is unique to it.
   - App flows and screen specs are entirely each audience's own. Nothing is inherited from the root.

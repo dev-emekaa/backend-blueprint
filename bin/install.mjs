@@ -115,7 +115,7 @@ ${c.b('Options')}
   --dry-run         Print what would change, write nothing
 
 ${c.b('What it writes')}
-  .claude/skills/          13 skills
+  .claude/skills/          14 skills
   .claude/rules/           conventions · tech stack · coding standards · security · testing · ci-cd
                            api-rbac · background-jobs
   docs/                    product-docs · business-rules · app-flows · screen-specs · api-docs · api-testing
@@ -169,6 +169,8 @@ ${c.b('Next')}
   3. Start Claude Code and run ${c.b('/feature-areas')} — it identifies every feature area
      from the PRD and writes ${c.dim('docs/feature-areas.md')}, which everything else reads.
   4. Run ${c.b('/backend-setup')} once, any time before the first build — it needs no product docs.
+
+  Already have a backend? Run ${c.b('/backend-adopt')} instead of steps 1 and 3.
 
   ${n} skills installed to ${c.dim(opts.personal ? '~/.claude/skills' : '.claude/skills')}${
     opts.personal ? c.y('\n  Note: personal skills are not read by cloud sessions or scheduled runs.') : ''}

@@ -2,7 +2,7 @@
 
 **Build a product's backend with Claude Code, from the product docs to a tested, deployed API.**
 
-You write down what the product must do first — its feature areas, business rules, user flows and screens — and have it reviewed. Then each part of the backend is built from those docs, with tests, API docs and a register of every endpoint and background job. Nothing gets built that can't be traced back to a document. Thirteen Claude Code skills and the rules behind them, for NestJS or FastAPI.
+You write down what the product must do first — its feature areas, business rules, user flows and screens — and have it reviewed. Then each part of the backend is built from those docs, with tests, API docs and a register of every endpoint and background job. Nothing gets built that can't be traced back to a document. Fourteen Claude Code skills and the rules behind them, for NestJS or FastAPI.
 
 **Works with** the Web App, Mobile App, Desktop App and Web Extension Blueprints: they build the apps against this backend's API docs, and send issues back through handoff files.
 
@@ -42,7 +42,7 @@ Re-running is safe: existing files are skipped and listed.
 
 ```
 .claude/
-  skills/        13 skills
+  skills/        14 skills
   rules/         8 rules (plus ai-services.md with --ai, deprecations.md with --store-client)
 CLAUDE.md        documentation map · audiences · project configuration
 docs/
@@ -59,6 +59,8 @@ docs/
 3. Run `/feature-areas`. Everything after it reads its output.
 4. Run `/backend-setup` once, any time before the first build — it needs no product docs.
 
+**Already have a backend?** Run `/backend-adopt` instead of steps 1 and 3. It documents the existing code the way these skills expect and lists where it departs from the rules; `/backend-setup` then fills whatever foundation the report says is missing. Pass the `--stack` you would migrate to if the code isn't on one of the two — `/backend-adopt` says whether the build skills apply.
+
 Commit `.claude/` with your project: cloud sessions and scheduled runs only read project skills. `--personal` is for throwaway work.
 
 ### Updating
@@ -69,7 +71,7 @@ npx github:dev-emekaa/backend-blueprint init --stack nestjs --force
 
 - Skills and rules are overwritten, including any edits you made — run it on a clean working tree and read the diff before committing.
 - `CLAUDE.md` is never overwritten: it holds your project's values.
-- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.4.1 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
+- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.0 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
 
 ---
 
@@ -90,7 +92,8 @@ PRD
 ```
 
 - **When something goes wrong:** `/backend-issue-fix`.
-- **Later phases** start with `/feature-requirements`, which turns new feature ideas into the phase's requirements. Then `/phase-review`, then `/backend-build` once per feature.
+- **Later phases** start with `/feature-requirements`, which reviews each new feature idea — build, change, defer or drop — and writes the phase's requirements. Then `/phase-review`, then `/backend-build` once per feature.
+- **An existing backend** the blueprint didn't start is brought in once with `/backend-adopt`; from then on it is run like any other.
 - **`/api-docs`, `/api-testing`, `/api-rbac` and `/background-jobs`** are run by the build itself. Run them directly only to set up, audit or repair those files.
 
 ---
@@ -148,6 +151,10 @@ The register of every endpoint and who may call it — including public endpoint
 ### `/background-jobs`
 The register of all work that no request starts — scheduled, delayed, event-driven and webhook jobs — with what each acts on and why running it twice is safe.
 **Writes** `.claude/rules/background-jobs.md`
+
+### `/backend-adopt`
+Brings an existing backend under the blueprint, once: inventories the code, says whether its stack fits, reconstructs the feature areas, rules, flows, schema, API docs and registers from the code with every fact citing its source, sets the tracker to what is true, and lists where the code departs from the rules as issues or a proposed phase. Changes no code.
+**Writes** the docs, `docs/adoption-report.md`
 
 ---
 

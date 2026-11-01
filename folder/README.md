@@ -1,6 +1,6 @@
 # Backend Blueprint
 
-Build a product's backend with Claude Code, from the product docs to a tested, deployed API. You write down what the product must do first — its feature areas, business rules, user flows and screens — and have it reviewed; then each part of the backend is built from those docs. Nothing gets built that can't be traced back to a document. Thirteen skills and the rules they follow.
+Build a product's backend with Claude Code, from the product docs to a tested, deployed API. You write down what the product must do first — its feature areas, business rules, user flows and screens — and have it reviewed; then each part of the backend is built from those docs. Nothing gets built that can't be traced back to a document. Fourteen skills and the rules they follow.
 
 Two stacks are included: **NestJS · TypeScript · Prisma · PostgreSQL** and **Python · FastAPI · SQLModel · PostgreSQL**.
 
@@ -10,7 +10,7 @@ Two stacks are included: **NestJS · TypeScript · Prisma · PostgreSQL** and **
 
 ```
 backend-blueprint/
-  skills/                13 skills, one folder each
+  skills/                14 skills, one folder each
   rules/                 the rules every project uses, plus two optional ones
     stacks/
       nestjs/            coding-standards.md · tech-stack.md
@@ -40,7 +40,7 @@ Then:
    - `ai-services.md` — keep it only if the product has AI features.
 2. **Add the CLAUDE.md blocks.** Paste `templates/CLAUDE.md` into your project's `CLAUDE.md` (create the file if there is none). Fill in your stack and audiences now, or leave them — each skill asks for anything missing, once.
 3. **Put your PRD** in `docs/product-docs/`.
-4. **Check it worked.** Start Claude Code and run `/context` — the rules appear under Memory files (`ci-cd.md` only once a deploy file is touched). Type `/` and the thirteen skills are listed.
+4. **Check it worked.** Start Claude Code and run `/context` — the rules appear under Memory files (`ci-cd.md` only once a deploy file is touched). Type `/` and the fourteen skills are listed.
 
 > `.claude` is a hidden folder. To see it in Finder, press **Cmd + Shift + .**
 
@@ -66,6 +66,10 @@ Then:
 2. Add the phase's designs, and any business rules you already have, to `docs/phase-{n}/product-docs/`.
 3. `/phase-review` — writes and audits the phase's rules, flows and specs, and sets the build order in `implementation-order.md`.
 4. `/backend-build` — one feature per session, or the whole phase.
+
+**Taking over an existing backend**
+
+`/backend-adopt` — once: documents the code the way these skills expect, with every fact citing its source, and lists where it departs from the rules; `/backend-setup` then fills the foundation it says is missing. Copy the `coding-standards.md` and `tech-stack.md` of the stack you would migrate to if the code isn't on one of the two — the adopt skill says whether the build skills apply. Then the project is run like any other.
 
 **Fixing an issue**
 
@@ -100,6 +104,8 @@ Then:
 **`/api-rbac`** — The register of every endpoint and who may call it. Written by builds; invoke it directly only to set up or audit the register.
 
 **`/background-jobs`** — The register of every piece of work no request triggers: scheduled, delayed, event-driven and webhook jobs. Written by builds; invoke it directly only to set up or audit the register.
+
+**`/backend-adopt`** — Brings an existing backend under the blueprint, once: inventories the code, says whether its stack fits, reconstructs the docs from the code with citations, sets the tracker, and lists deviations as issues or a proposed phase. Changes no code.
 
 ---
 

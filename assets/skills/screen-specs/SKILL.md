@@ -29,7 +29,7 @@ Read these, and ask for anything missing before starting.
 
 **From designs** — also:
 
-- Screenshots of the designs, or screen specs already drafted from them — for example by the frontend. State which screen from the app flow each one corresponds to.
+- Screenshots of the designs, the Figma file through its MCP where connected, or screen specs already drafted from them — for example by the frontend. State which screen from the app flow each one corresponds to.
 
 In From designs mode, report these as issues — in the chat (or, during a phase review, in its review docs), never in the spec: conflicts between the designs and the flows or business rules, logically flawed specs, and missing context, fields or data a screen needs. A placeholder or sample value in a design is not an issue unless its shape or type is wrong. Where a fix follows from the approved flows and business rules, write the corrected spec and report the change as a frontend action; only content waiting on a decision is left out until it is answered.
 

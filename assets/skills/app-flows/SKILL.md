@@ -17,7 +17,7 @@ Read these, and ask for anything missing before starting:
 - Business rules for the feature areas
 - `docs/feature-areas.md` — the feature areas and what each owns
 - `CLAUDE.md` — the documentation map, the audiences (and which is primary), and each audience's clients
-- *From designs mode only:* screenshots of the UI screens, or screen specs already drafted from them, stating which screen each one shows where known
+- *From designs mode only:* screenshots of the UI screens, the Figma file through its MCP where connected, or screen specs already drafted from them, stating which screen each one shows where known
 - **Reference material (optional)** — screens from competitor or similar products, for inspiration: screenshots you supply, or screens pulled from a design-reference library such as Mobbin, through its connector, when one is connected and you ask for it. Strict limits: they are **reference, never a source**. Coverage is driven by the PRD and the business rules alone, so a flow they never showed is still written and a flow they showed that this product does not call for is not. Where one suggests something genuinely better that the PRD does not ask for, raise it as a question rather than writing it in, and never copy anything that conflicts with the business rules.
 
 
@@ -26,7 +26,7 @@ Read these, and ask for anything missing before starting:
 ## Modes
 
 - **From PRD (default)** — flows are derived from the PRD and the business rules. Reference material, where supplied, informs how a flow could be shaped; it never decides which flows exist.
-- **From designs** — used when designs are supplied: screenshots of the UI, or screen specs already drafted from them. Work in this order:
+- **From designs** — used when designs are supplied: screenshots of the UI, the Figma file through its MCP where connected, or screen specs already drafted from them. Work in this order:
   1. Map each screen to its feature area and flow. Confirm any mapping you inferred.
   2. Derive each flow from the screens plus the business rules. Steps no screen shows — expiries, notifications, scheduled changes, third-party callbacks — are derived from the rules and marked `(System Action — no screen; derived from {RULE-ID})`.
   3. Report conflicts between the screens and the rules, missing steps or screens, and logically flawed flows in the chat (or, during a phase review, in its review docs) — never in the doc. Where a fix follows from the business rules, write the corrected flow and report the change as a frontend action; content waiting on a decision is left out until it is answered.

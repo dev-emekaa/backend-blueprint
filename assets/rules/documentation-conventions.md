@@ -34,7 +34,7 @@ Three files record what exists in the **code** rather than what the product does
 
 **Registers follow the code; docs follow the product.** They are organised by backend module, not by feature area, and take no audience or client segment in their names. Each one's entry format lives in its own skill.
 
-**The integration handoff is the one doc clients write.** `docs/integration-handoff/` holds one `backend-issues-{client}.md` per client (plus its `-resolved` archive): issues that client hit while integrating, written in the client repo and delivered into this one by its docs sync. The backend issue-fix process appends each fix's resolution, setting the entry `deployed`; the client verifies and archives. The backend never edits a client's entries, only appends.
+**The integration handoff is the one doc clients write.** `docs/integration-handoff/` holds one `backend-issues-{client}.md` per client (plus its `-resolved` archive): issues that client hit while integrating, or a flow or rule its review of a design showed to be wrong, written in the client repo and delivered into this one by its docs sync. The backend issue-fix process appends each resolution — a fix deployed to staging, or a doc corrected — setting the entry `deployed`; the client verifies and archives. The backend never edits a client's entries, only appends.
 
 **`docs/` is what leaves the backend; `.claude/rules/` is what stays.** Business rules, app flows, screen specs, api-docs and api-testing travel to the client repo and are read by the client developer. The registers, the schema, the architecture index and the standards have no client reader.
 

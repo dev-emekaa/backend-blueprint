@@ -93,7 +93,7 @@ Endpoints and business logic are built in batches. In the first phase, **one fea
 | **Seed data** | The server seed file | Seed users and data for easily testing all built feature areas' flows and endpoints. Must be updated every time a feature area is built or updated. |
 | **API doc** | `api-docs-{{feature-area}}` | The client dev's **primary integration reference**. Organized by feature area; contains all endpoints needed by that area's flows and screens, plus everything needed to integrate them properly. |
 | **API testing doc** | `api-testing-{{feature-area}}` | Guides the backend or client dev in testing each feature area's endpoints and flows, against either the local base URL or the staging base URL. |
-| **Integration handoff** | `docs/integration-handoff/backend-issues-{client}.md` | One file per client, written in the client repo and delivered by its docs sync. Each entry an issue that client is blocked on, status `open`. This skill appends each fix's resolution (status `deployed`); the client flips it to `verified` once rewired, and archives a phase's entries to `backend-issues-{client}-resolved.md` when all are verified. The backend never edits a client's entries — it only appends resolutions. |
+| **Integration handoff** | `docs/integration-handoff/backend-issues-{client}.md` | One file per client, written in the client repo and delivered by its docs sync. Each entry an issue that client is blocked on, status `open`. This skill appends each fix's resolution (status `deployed`); the client flips it to `verified` once rewired, or once its screen passes against a corrected doc, and archives a phase's entries to `backend-issues-{client}-resolved.md` when all are verified. The backend never edits a client's entries — it only appends resolutions. |
 | **Infra docs** | `{{INFRA_DOCS_PATH}}` (e.g. `docs/infra/`) | Provisioning, configuration, and deployment of the staging and production environments. Consulted to understand the environment setup; updated whenever a fix changes it. |
 | **External-integration guides** | `{{DOCS_DIR}}external-integrations/` | One setup guide per third-party service, covering provider-side setup, credentials, and env variables. Updated if a fix changes an integration's setup or configuration. |
 
@@ -121,6 +121,7 @@ Apply these seven steps to **every** issue, whether I send it in chat or it arri
     - **Not a legitimate backend issue** → tell me it was a confusion, not a real backend issue. Do not act on it.
     - **A legitimate backend issue** → proceed to Step 2.
     - **A request to use a different approach from the one in the relevant rules files** *and it is logically sound* → present it to me and **request my permission** before proceeding, since accepting it will also replace the current documented approach.
+    - **A flow or rule that is wrong, with nothing built from it yet** — a client's review of a design showed it → no code change; Steps 2–6 do not run. I decide; the doc is corrected with `/app-flows` or `/business-rules`, then the resolution is appended under the entry as Phase C does — the date, one line, and the corrected doc in place of the endpoints — with **Status:** `deployed`, and the Step 7 entry records Steps 2–6 as N/A so the handoff message lists the doc under Context references.
 
 ### Step 2 — Update the affected docs
 

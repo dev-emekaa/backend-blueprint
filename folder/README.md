@@ -127,6 +127,12 @@ Rules load into every Claude Code session and apply to all the code it writes.
 
 ---
 
+## Working with clients
+
+Each client project — web, mobile, desktop, extension — has a docs sync that copies files between it and this project, cloned on the same machine. Nothing is run here. Clients pull this project's product docs, API docs and phase folders, and push their screen specs and backend-issues files into `docs/`; commit what arrives like any other change.
+
+---
+
 **Requires** Claude Code. Updates replace these files — any edits you made to a skill or rule are overwritten, so keep your own changes in `CLAUDE.md` or new rule files.
 
 © dev-emeka. All rights reserved. Licensed for use in your own projects; not for redistribution.

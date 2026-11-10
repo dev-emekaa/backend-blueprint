@@ -71,7 +71,7 @@ npx github:dev-emekaa/backend-blueprint init --stack nestjs --force
 
 - Skills and rules are overwritten, including any edits you made — run it on a clean working tree and read the diff before committing.
 - `CLAUDE.md` is never overwritten: it holds your project's values.
-- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.2 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
+- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.3 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
 
 ---
 
@@ -173,6 +173,15 @@ Loaded by Claude Code at the start of every session — except `ci-cd.md`, which
 | `api-rbac.md` · `background-jobs.md` | The two registers, empty until the build fills them |
 | `ai-services.md` *(with `--ai`)* | Model calls, agents, vector search and media models, and treating model output as untrusted |
 | `deprecations.md` *(with `--store-client`)* | What can't change once an app version has shipped |
+
+---
+
+## Working with clients
+
+Each client repo — web, mobile, desktop, extension — has a docs sync that copies files between it and this repo, cloned on the same machine. Nothing is run here.
+
+- **Clients pull** this repo's product docs, API docs and phase folders.
+- **Clients push** their screen specs and backend-issues files into `docs/`. They arrive as uncommitted changes: commit them on a branch with a PR, like any other change.
 
 ---
 

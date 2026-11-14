@@ -48,6 +48,7 @@ CLAUDE.md        documentation map · audiences · project configuration
 docs/
   product-docs/  your PRD goes here
   business-rules/  app-flows/  screen-specs/  api-docs/  api-testing/
+  blueprint/     this README, for Claude to read in the project
 ```
 
 `docs/feature-areas.md` isn't created — `/feature-areas` writes it from your PRD.
@@ -69,9 +70,9 @@ Commit `.claude/` with your project: cloud sessions and scheduled runs only read
 npx github:dev-emekaa/backend-blueprint init --stack nestjs --force
 ```
 
-- Skills and rules are overwritten, including any edits you made — run it on a clean working tree and read the diff before committing.
+- Skills, rules and the guide in `docs/blueprint/` are overwritten, including any edits you made — run it on a clean working tree and read the diff before committing.
 - `CLAUDE.md` is never overwritten: it holds your project's values.
-- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.3 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
+- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.4 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
 
 ---
 
@@ -180,7 +181,7 @@ Loaded by Claude Code at the start of every session — except `ci-cd.md`, which
 
 Each client repo — web, mobile, desktop, extension — has a docs sync that copies files between it and this repo, cloned on the same machine. Nothing is run here.
 
-- **Clients pull** this repo's product docs, API docs and phase folders.
+- **Clients pull** this repo's product docs, API docs, phase folders and the guide in `docs/blueprint/`.
 - **Clients push** their screen specs and backend-issues files into `docs/`. They arrive as uncommitted changes: commit them on a branch with a PR, like any other change.
 
 ---

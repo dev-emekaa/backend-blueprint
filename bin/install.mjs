@@ -7,7 +7,7 @@ import { readdir, mkdir, copyFile, readFile, writeFile, stat } from 'node:fs/pro
 import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { homedir } from 'node:os';
-import { ASSETS, STACKS, RULES, OPTIONAL_RULES, DOC_DIRS, techStack, claudeTemplate } from '../lib/assets.mjs';
+import { ASSETS, GUIDE, GUIDE_NAME, STACKS, RULES, OPTIONAL_RULES, DOC_DIRS, techStack, claudeTemplate } from '../lib/assets.mjs';
 
 const CWD = process.cwd();
 const MARKER = '<!-- backend-blueprint:docs-map -->';
@@ -85,6 +85,11 @@ async function installDocDirs(opts) {
   }
 }
 
+// The repo README, so a session in the project can read how the blueprint works.
+async function installGuide(opts) {
+  await putFile(GUIDE, join(CWD, 'docs', 'blueprint', GUIDE_NAME), opts);
+}
+
 const docsMap = async (stack) => `\n${MARKER}\n${await claudeTemplate(stack)}`;
 
 async function installClaudeMd(opts) {
@@ -119,6 +124,7 @@ ${c.b('What it writes')}
   .claude/rules/           conventions · tech stack · coding standards · security · testing · ci-cd
                            api-rbac · background-jobs
   docs/                    product-docs · business-rules · app-flows · screen-specs · api-docs · api-testing
+  docs/blueprint/          backend-blueprint.md — the blueprint's README, for Claude sessions in the project
   CLAUDE.md                documentation map, audiences, project configuration
 `);
 }
@@ -152,6 +158,7 @@ async function main() {
   const n = await installSkills(opts);
   await installRules(opts);
   await installDocDirs(opts);
+  await installGuide(opts);
   await installClaudeMd(opts);
 
   const label = opts.dry ? 'would write' : 'written';

@@ -15,6 +15,8 @@ backend-blueprint/
     stacks/
       nestjs/            coding-standards.md · tech-stack.md
       fastapi/           coding-standards.md · tech-stack.md
+  docs/
+    blueprint/           backend-blueprint.md — the guide, to copy into docs/ so Claude can read how the blueprint works
   templates/
     CLAUDE.md            the blocks to add to your project's CLAUDE.md
 ```
@@ -31,6 +33,7 @@ mkdir -p .claude/rules docs/product-docs
 cp -R "$BP/skills" .claude/
 cp "$BP"/rules/*.md .claude/rules/
 cp "$BP"/rules/stacks/nestjs/*.md .claude/rules/      # or: stacks/fastapi
+cp -R "$BP/docs/blueprint" docs/
 ```
 
 Then:
@@ -129,10 +132,10 @@ Rules load into every Claude Code session and apply to all the code it writes.
 
 ## Working with clients
 
-Each client project — web, mobile, desktop, extension — has a docs sync that copies files between it and this project, cloned on the same machine. Nothing is run here. Clients pull this project's product docs, API docs and phase folders, and push their screen specs and backend-issues files into `docs/`; commit what arrives like any other change.
+Each client project — web, mobile, desktop, extension — has a docs sync that copies files between it and this project, cloned on the same machine. Nothing is run here. Clients pull this project's product docs, API docs, phase folders and the guide in `docs/blueprint/`, and push their screen specs and backend-issues files into `docs/`; commit what arrives like any other change.
 
 ---
 
-**Requires** Claude Code. Updates replace these files — any edits you made to a skill or rule are overwritten, so keep your own changes in `CLAUDE.md` or new rule files.
+**Requires** Claude Code. Updates replace these files — any edits you made to a skill, a rule or the guide are overwritten, so keep your own changes in `CLAUDE.md` or new rule files.
 
 © dev-emeka. All rights reserved. Licensed for use in your own projects; not for redistribution.

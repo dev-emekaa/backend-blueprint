@@ -12,6 +12,7 @@
 | API testing | `docs/api-testing/` |
 | Infra setup | `docs/infra/` |
 | Phase folders | `docs/phase-{n}/` |
+| Blueprint guide | `docs/blueprint/backend-blueprint.md` |
 
 ## Audiences and clients
 

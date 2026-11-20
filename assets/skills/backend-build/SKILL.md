@@ -104,6 +104,7 @@ Follow these files as written. This prompt does not restate them.
 | `background-jobs` | Every piece of background work in the app — scheduled, event-driven, delayed, and inbound-webhook handlers — grouped under its backend module. The `api-rbac` of work that isn't request-triggered. Entry format follows the Background Jobs skill. Starts empty and grows with the build. | Any background job built, modified, or removed. |
 | `deprecations` *(store-distributed or installed clients only)* | Everything kept alive only so released client builds keep working, and the record of when each can go. Covers old response and request fields, replaced endpoints, retired enum values, and schema columns awaiting their contract phase. Each entry records: what it is, its kind, what replaces it (or "none"), the date it was deprecated, and its status — `deprecated` while released builds may still read it, `removable` once none can reach the API. When the thing is deleted, its entry is deleted with it; git holds the history. Without this, deprecated things are never deleted, because nobody can prove what still reads them. | Anything deprecated rather than deleted outright; an entry becomes removable; the thing and its entry are removed. |
 | Server `seed` file | Realistic fake users and data, aligned with the schema, flows, and rules, that make every user-facing flow in a built area testable — happy and error paths — without registering users from scratch. Used on the dev and staging servers by the backend dev and by client devs testing against integrated UI. | Every area built; every change to endpoints or business logic. |
+| Seed manifest (`docs/seed.md`) | What the seed holds and how to reseed, as Step 7 lists it; it travels to the clients with their docs sync. | With every seed change. |
 | E2E test factories / fixtures | Test data for the e2e suite. **Kept entirely separate from the server seed file** — they serve different purposes and must not be merged or made to depend on each other. | Every area built. |
 | `api-docs-{{feature-area}}` | The client devs' primary integration reference for that area. | Area built or changed. |
 | `api-testing-{{feature-area}}` | How to exercise that area's endpoints via Postman or curl. | Area built or changed. |
@@ -367,6 +368,7 @@ Written so I can follow it start to finish without prior knowledge of that provi
 - **Server seed file** — add realistic users and data covering every flow in this area, happy and error paths, aligned with the schema, flows, and rules. A dev should be able to exercise any flow in the area without creating a user from scratch.
 - **Pre-job states** — include records sitting in the states this area's background jobs act on (pending expiry, awaiting reminder, ready to settle), so every job has something to operate on when triggered — and near-boundary records the job must **not** act on (e.g. a match due tomorrow next to one overdue), so the untouched side of its selection criteria can be asserted.
 - **Seed email addresses belong to a domain the team controls** (one catch-all inbox), so a flow that emails a code or link can be completed on staging, where the provider is real; locally Mailpit captures them regardless.
+- **Seed manifest** — `docs/seed.md` says what the seed now holds: the shared seed password; every account with its email, role, organisation or tenant and notable state; the records clients' E2E tests may treat as disposable; per feature area, which account walks which flow; and how to reseed — the dev command, and the staging dev-tool endpoint with its token as a variable, as the api-testing guide writes it. It is written for whoever tests against the seed, in this repo or a client, and never lists anything from production.
 - **E2E factories/fixtures** — updated separately, for the e2e suite only. Keep the two independent.
 - **Reseed dev-tool endpoint** — a protected dev-tool endpoint that clears the staging datastores and reloads the seed data must exist from the first area built; deploy and client-side testing depend on it. Build it once, keep it working as the seed grows.
 - Remove seed data this area's work has made obsolete.
@@ -392,7 +394,7 @@ Follow the `testing` rules file for structure, naming, and approach.
 Do not make me test manually — verify the area yourself with curl before documenting it.
 
 1. Reset and reseed the dev datastores via `{{RESEED_COMMAND}}`, and start the dev server (`{{DEV_SERVER_COMMAND}}`).
-2. Using the seeded users, curl every flow in the area end to end against `{{LOCAL_BASE_URL}}` — happy paths as the client would walk them, the key error responses the client must handle, and every background job dispatched by name (eligible records transition, ineligible ones untouched, second dispatch changes nothing).
+2. Using the seed manifest's accounts, curl every flow in the area end to end against `{{LOCAL_BASE_URL}}` — happy paths as the client would walk them, the key error responses the client must handle, and every background job dispatched by name (eligible records transition, ineligible ones untouched, second dispatch changes nothing).
 3. Confirm each endpoint's request shape → response result → intended action matches the area's `app-flow`, `business-rules`, and `screen-specs`. This is a verification sweep of the shipped artifact against real seed data — not a re-run of the e2e permutation matrix, which Step 8 owns.
 4. **Present the sweep in the chat, flow by flow:** each call's request — method, path and body — and its response — status and body, with tokens shortened and long lists trimmed — then whether the flow passed. End with a list of everything that failed, so I can review it with an extra pair of eyes.
 
@@ -405,6 +407,8 @@ If a bug is found: do not fix it immediately — state the intended fix, confirm
 - **Swagger / OpenAPI** — every endpoint in this area properly documented.
 - **`api-docs-{{feature-area}}` and `api-testing-{{feature-area}}`** — written following the API Docs and API Testing skills, including their background-behaviour and background-jobs sections. In a later phase, a feature's endpoints go into the canonical file of every area they belong to, never into phase folders.
 - **Screen-spec endpoint references** — replace every `pending` reference in the screen specs this build covers with `METHOD /path` and the action. First phase: in the canonical files. Later phases: in the phase file, before promotion.
+
+Then run the area's api-testing guide once as written, against the dev server with the manifest's accounts — it is a client developer's first contact with the area. A request that fails is a doc error or a code error; the flows and rules decide which. A doc error is corrected in the guide; a code error follows Step 9's rule.
 
 For all docs: write to the file's purpose and follow its existing structure and format. Add only what belongs there; remove only what this work made obsolete. Keep them readable — client developers and non-backend readers use these — except where the file is technical by design (`api-doc`, `api-testing`, `api-rbac`), which stay precise and technical. Docs never mention issues, resolutions, decisions or the review.
 
@@ -439,7 +443,7 @@ Builds every unit of the phase in one session — each feature area (first phase
 3. **Build each unit in order — Steps 3–8, 10 and 11 — in a fresh context.** Give each unit a subagent with its approved plan, told to read this skill and `.claude/rules/` first. If subagents are unavailable, build in this session and compact between units. Never build units in parallel: they share the schema, migrations, registers and seed.
 4. **Tests gate each unit.** A unit is complete when its suites and every earlier unit's pass; it is then committed — one commit per unit, on one branch. A unit that fails, or meets anything its plan did not settle, stops the run with a report. The commits show where to resume.
 5. **External setup, once.** After the last unit, list every setup guide and infra step the phase introduced, and offer to walk me through them — now or in a later session.
-6. **One curl sweep** (Step 9) of every flow in the phase, against a freshly reseeded dev server, once setup is done. Bugs follow Step 9's rule.
+6. **One curl sweep** (Step 9) of every flow in the phase, and each area's api-testing guide run once as written (Step 10), against a freshly reseeded dev server, once setup is done. Bugs follow Step 9's rule.
 7. **Mark every unit `Built`** (Step 12), write one report for the phase, and go to Section 6 with one PR.
 
 ---
@@ -498,7 +502,7 @@ A build is not done until all of the following are true:
 - [ ]  Setup guide written for any third-party service introduced, and the infra docs updated for any infra requirement introduced.
 - [ ]  Later phases: phase entries promoted with every pointer cleared, the integration index created, and the feature folder deleted.
 - [ ]  Marked `Built` — the feature area in `feature-areas` (first phase), or the feature in `implementation-order.md` (later phases). A new feature area's row advanced from `Draft`.
-- [ ]  Curl-verified: every flow in the area exercised end to end against a freshly reseeded dev server (Step 9), and against staging after deploy and reseed (Section 6), with results presented in the chat.
+- [ ]  Curl-verified: every flow in the area exercised end to end against a freshly reseeded dev server (Step 9), the area's api-testing guide run once as written (Step 10), and against staging after deploy and reseed (Section 6), with results presented in the chat.
 - [ ]  If production is live: every migration phase-classified, any backfill derived only from data already held, and the change verified against a restored production snapshot.
 - [ ]  If production is live: production release notes produced — migrations, new environment variables, infra, newly active jobs, client compatibility, rollback plan.
 - [ ]  Dev-tool endpoints (reseed, job dispatcher) disabled by environment in production.

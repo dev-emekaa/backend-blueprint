@@ -1,6 +1,6 @@
 ---
 name: backend-issue-fix
-description: Resolve backend or API issues, whoever found them — given in chat or arriving in the clients' integration-handoff files — through validation, doc updates, code fixes, tests, curl verification on dev and staging, and a client handoff. Use for bugs, wrong behaviour and small corrections to built endpoints.
+description: Resolve backend or API issues, whoever found them — given in chat, logged in `docs/issues.md`, or arriving in the clients' integration-handoff files — through validation, doc updates, code fixes, tests, curl verification on dev and staging, and a client handoff. Use for bugs, wrong behaviour and small corrections to built endpoints.
 ---
 
 # Backend Issue Fix
@@ -44,7 +44,7 @@ Throughout this skill, `{{PROD_STATUS}}`, `{{CLIENT_TYPE}}`, `{{LOCAL_BASE_URL}}
 - All **`{{IN_SCOPE_AREAS}}`** have already been built through the backend build process.
 - We are **not** building **`{{OUT_OF_SCOPE_AREAS}}`** yet. First we must resolve the outstanding issues in the in-scope areas so they are solid before the client integrates them.
 
-I will send you a list of issues. For each one, follow the per-issue workflow in Section 4.
+The issues come from Section 10's collection — the handoff files, `docs/issues.md` and what I send in chat. For each one, follow the per-issue workflow in Section 4.
 
 ### 2.1 — Engineering Constraints
 
@@ -91,6 +91,7 @@ Endpoints and business logic are built in batches. In the first phase, **one fea
 | **Background jobs registry** | `background-jobs` | The complete list of every background job in the codebase — scheduled, event-driven, delayed, and inbound-webhook handlers — organized by module, with each job's name (the dispatcher key), trigger, selection criteria, idempotency key, and retry/failure behavior. Updated whenever a job is added, modified, or removed. |
 | **Deprecations register** | `deprecations` *(store-distributed or installed clients only)* | Everything kept alive only so released client builds keep working — old fields, replaced endpoints, retired enum values, schema columns awaiting their contract phase — each with what replaces it, the date it was deprecated, and its status: `deprecated` while released builds may still read it, `removable` once none can reach the API. Entries are deleted when the thing itself is; git holds the history. Updated whenever something is deprecated rather than deleted. Clearing entries and removing the thing itself belongs in the next build session's plan, not a fix. |
 | **Seed data** | The server seed file | Seed users and data for easily testing all built feature areas' flows and endpoints. Must be updated every time a feature area is built or updated. |
+| **Seed manifest** | `docs/seed.md` | What the seed holds — accounts, the shared password, roles, states, disposable records, which account walks which flow — and how to reseed. Updated with every seed change. |
 | **API doc** | `api-docs-{{feature-area}}` | The client dev's **primary integration reference**. Organized by feature area; contains all endpoints needed by that area's flows and screens, plus everything needed to integrate them properly. |
 | **API testing doc** | `api-testing-{{feature-area}}` | Guides the backend or client dev in testing each feature area's endpoints and flows, against either the local base URL or the staging base URL. |
 | **Integration handoff** | `docs/integration-handoff/backend-issues-{client}.md` | One file per client, written in the client repo and delivered by its docs sync. Each entry an issue that client is blocked on, status `open`. This skill appends each fix's resolution (status `deployed`); the client flips it to `verified` once rewired, or once its screen passes against a corrected doc, and archives a phase's entries to `backend-issues-{client}-resolved.md` when all are verified. The backend never edits a client's entries — it only appends resolutions. |
@@ -110,7 +111,7 @@ Seed users and data exist so any flow or endpoint can be tested without building
 
 ## 4. Per-Issue Workflow
 
-Apply these seven steps to **every** issue, whether I send it in chat or it arrives as an `open` entry in a handoff file.
+Apply these seven steps to **every** issue, whether I send it in chat or it arrives as an `open` entry in a handoff file or in `docs/issues.md`.
 
 ### Step 1 — Validate the issue
 
@@ -149,6 +150,7 @@ This is what guarantees that when the client UI is integrated, every endpoint ha
 
 - Remove obsolete seed data.
 - Ensure the seed file contains everything needed to test **all** flows and endpoints for each affected feature area.
+- Update `docs/seed.md` to match: the accounts, states and flows the fix changed.
 
 ### Step 5 — Update tests
 
@@ -177,6 +179,7 @@ Close each issue with a short checklist so the workflow stays honored across the
 - **Client impact** — anything already integrated that this breaks or changes, classified **additive** / **breaking** / **deprecation**, with the client-side action required for anything not additive. For a deprecation, name the deprecations register entry added. "None" if none.
 - **Production impact** — if production is live: migrations and their phase, what any backfill derives from, new environment variables, and any job whose next production run changes what it selects. "None" if none.
 - **Background jobs** touched, if any — name, trigger type, and what changed.
+- **`docs/issues.md`** — if the issue came from it, say so; the entry moves in Phase C.
 
 These entries are the source material for the handoff message in Section 8.1 — build it from them rather than reconstructing from memory at the end.
 
@@ -189,13 +192,14 @@ Once **all** issues are resolved, do not make me test manually. You verify every
 **Procedure:**
 
 1. Reset and reseed the dev datastores (`{{DATASTORES}}`) — via `{{RESEED_COMMAND}}`, or any other reliable way to get them up, running, and reseeded.
-2. Familiarize yourself with the **seed users and data**; use them to run the tests efficiently.
+2. Read `docs/seed.md` for the **seed users and data**; use them to run the tests efficiently.
 3. Start the dev server (`{{DEV_SERVER_COMMAND}}`).
 4. Run curl tests against `{{LOCAL_BASE_URL}}` covering:
     - every endpoint touched by the resolved issues,
     - every flow those endpoints are involved in,
     - every other endpoint those flows depend on,
-    - every background job those flows depend on, dispatched by job name via the job-dispatcher dev-tool endpoint — including a second dispatch, confirming the second run changes nothing.
+    - every background job those flows depend on, dispatched by job name via the job-dispatcher dev-tool endpoint — including a second dispatch, confirming the second run changes nothing,
+    - each affected area's api-testing guide, run once as written — a request that fails is a doc error or a code error; the flows and rules decide which.
 5. For each endpoint, confirm that its **request shape → response result → intended action** all work exactly as expected and are in line with the **flows doc, business rules, and screen specs** of the feature area it belongs to.
 6. **Present the sweep in the chat, flow by flow:** each call's request — method, path and body — and its response — status and body, with tokens shortened and long lists trimmed — then whether the flow passed. End with a list of everything that failed, so I can review it with an extra pair of eyes.
 
@@ -239,7 +243,7 @@ After I confirm the staging reseed succeeded:
 
 Afterwards, I will reseed staging again to return it to a stable state for the client developers to continue integration.
 
-Then, for every resolved issue that came from a handoff file, append a resolution line under its entry — the date, one line on what changed, and the endpoints by method and full path — and set its **Status:** to `deployed`. The client's next `docs:pull` collects it.
+Then, for every resolved issue that came from a handoff file, append a resolution line under its entry — the date, one line on what changed, and the endpoints by method and full path — and set its **Status:** to `deployed`. The client's next `docs:pull` collects it. One that came from `docs/issues.md` moves to `docs/issues-resolved.md` with the date and one line.
 
 ---
 
@@ -274,7 +278,7 @@ A single message addressed to **both** the `{{CLIENT_TEAM_NAME}}` developers and
 **The "Reference files updated" section at the bottom must:**
 
 - List every doc file updated during this session that is relevant to the client side, split into two groups:
-    - **Integration references** — the API doc and API testing doc (what to build against and test with).
+    - **Integration references** — the API doc, the API testing doc and the seed manifest (what to build against and test with).
     - **Context references** — the flows doc, business rules, screen specs, and any others (context on the app's flows, rules, and screens, and how the backend behaves).
 - Give a one-line note per file on what changed in it and why it matters to them.
 - State that these files are updated in this repo's `docs/`, and that the client repo collects them with its docs sync (`pnpm docs:pull`) — nothing is copied by hand.
@@ -311,6 +315,6 @@ A bug found in live production is still fixed through the full workflow above �
 Before the first issue, in a few lines:
 
 1. **State the project values** you read from `CLAUDE.md` that change what you do: production status, client type, and client release status. Ask for any that are missing. I state the scope in play, and anything deferred, alongside the issues.
-2. **Collect the issues.** Read every `docs/integration-handoff/backend-issues-*.md` and list its `open` entries, then ask for any further issues if I haven't already given them. Some I find myself and give in chat; the rest arrive through the handoff files.
+2. **Collect the issues.** Read every `docs/integration-handoff/backend-issues-*.md` and `docs/issues.md`, list their `open` entries, then ask for any further issues if I haven't already given them. Some I find myself and give in chat; the rest arrive through the handoff files or were logged in `docs/issues.md`.
 
 Then work through them one at a time per Section 4. Do not summarise the workflow back to me — start it.

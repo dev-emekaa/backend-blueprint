@@ -158,7 +158,7 @@ What must hold in every part of this backend, whatever the stack. This file is p
 ## Supply chain and access
 
 - **Lockfiles are committed, and installs use them exactly.** A new dependency must be maintained and widely used, and earn its weight; a few lines of code are written, not installed.
-- **The pipeline audits dependencies** and fails on a high or critical vulnerability that has a fix. Update PRs go through the same checks as any other.
+- **The pipeline audits dependencies** and fails on a high or critical vulnerability that has a fix. Update PRs — one grouped PR per ecosystem for the week's minor and patch updates, one PR per major — go through the same checks as any other.
 - **Runtime images** pin their base image, exclude dev dependencies and build tools, contain no secrets, and run as a non-root user.
 - **CI workflows** pin third-party actions to a commit SHA, give each job the least token permission, and expose secrets only to the jobs that need them — never to pull requests from forks. Deploy secrets live in GitHub environments that only `main` can deploy to, never as repository secrets, which a workflow on any branch can read.
 - **People:** MFA on GitHub, the hosting platform, the cloud and DNS accounts. Least-privilege roles for everyone. Access is removed the day someone leaves.

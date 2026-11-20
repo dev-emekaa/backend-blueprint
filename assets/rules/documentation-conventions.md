@@ -36,7 +36,9 @@ Three files record what exists in the **code** rather than what the product does
 
 **The integration handoff is the one doc clients write.** `docs/integration-handoff/` holds one `backend-issues-{client}.md` per client (plus its `-resolved` archive): issues that client hit while integrating, or a flow or rule its review of a design showed to be wrong, written in the client repo and delivered into this one by its docs sync. The backend issue-fix process appends each resolution — a fix deployed to staging, or a doc corrected — setting the entry `deployed`; the client verifies and archives. The backend never edits a client's entries, only appends.
 
-**`docs/` is what leaves the backend; `.claude/rules/` is what stays.** Business rules, app flows, screen specs, api-docs and api-testing travel to the client repo and are read by the client developer. The registers, the schema, the architecture index and the standards have no client reader. Each client moves docs with its own docs sync, which pulls from this repo and pushes its screen specs and backend-issues files into it; what arrives is committed here like any other change.
+**`docs/issues.md` is this repo's own list** — a backend issue found in a session that does not fix it, whoever found it. One a client hit goes in its handoff file, not here; one fixed on the spot is never logged. One entry each: `### {ISSUE-ID} · {endpoint or area}`, then **Found** (the date, and the skill or session), **Expected**, **Observed**, **Status** `open`. `/backend-issue-fix` reads the open entries at its start and, on a fix, moves the entry to `docs/issues-resolved.md` with the date and one line. No client pulls it.
+
+**`docs/` is what leaves the backend; `.claude/rules/` is what stays.** Business rules, app flows, screen specs, api-docs, api-testing and the seed manifest travel to the client repo and are read by the client developer. The registers, the schema, the architecture index and the standards have no client reader. Each client moves docs with its own docs sync, which pulls from this repo and pushes its screen specs and backend-issues files into it; what arrives is committed here like any other change.
 
 ## Phases
 
@@ -66,7 +68,7 @@ Feature folders never contain API docs or API testing; those are written directl
 - During review, only phase files are created or edited; canonical files receive pointer lines only. Pointers link rules, flows and screens by anchor or entry ID, never by line number.
 - No stub canonical files. Missing ones are created at promotion; `Adds to:` names the path the file will take.
 - No entry lives in two places.
-- Docs never mention issues, resolutions, decisions or the review process.
+- Docs never mention issues, resolutions, decisions or the review process; those live in the review docs, the handoff files and `docs/issues.md`.
 - Screen specs record data shapes and types, not values. They reference endpoints only by `METHOD /path` plus the action; an endpoint not yet built is `pending`.
 - Every screen spec states the roles that can access it; every app flow states its actor. Business rules carry no per-rule roles field: each feature area's access table is the source for permissions (there is no separate roles-and-access doc), and a rule names roles only where it differs by role. Role- or client-specific elements are marked inline as exceptions. Client is never tagged per entry — it comes from the path.
 

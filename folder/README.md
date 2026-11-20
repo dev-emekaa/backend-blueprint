@@ -98,7 +98,7 @@ Then:
 
 **`/backend-build`** — Builds a feature area or feature end to end: schema, endpoints, background jobs, tests, a curl sweep against real seed data, docs and promotion. Your approval comes at the plan; tests gate everything after it.
 
-**`/backend-issue-fix`** — Resolves a backend issue: confirms it against the code and docs, writes a failing test first, fixes it, verifies on dev and staging, and produces the client handoff.
+**`/backend-issue-fix`** — Resolves a backend issue: confirms it against the code and docs, writes a failing test first, fixes it, verifies on dev and staging, and produces the client handoff. Starts from the `open` entries in `docs/issues.md` and the handoff files, then the issues you give it.
 
 **`/api-docs`** — The integration reference client developers build against, per feature area, written from the running code.
 
@@ -132,7 +132,7 @@ Rules load into every Claude Code session and apply to all the code it writes.
 
 ## Working with clients
 
-Each client project — web, mobile, desktop, extension — has a docs sync that copies files between it and this project, cloned on the same machine. Nothing is run here. Clients pull this project's product docs, API docs, phase folders and the guide in `docs/blueprint/`, and push their screen specs and backend-issues files into `docs/`; commit what arrives like any other change.
+Each client project — web, mobile, desktop, extension — has a docs sync that copies files between it and this project, cloned on the same machine. Nothing is run here. Clients pull this project's product docs, API docs and testing guides, the seed manifest, phase folders and the guide in `docs/blueprint/`, and push their screen specs and backend-issues files into `docs/`; commit what arrives like any other change.
 
 ---
 

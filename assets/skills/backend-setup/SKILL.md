@@ -88,7 +88,7 @@ State what exists, what will be created, the processes the project runs (api, wo
   - the staging deploy — serialized in merge order
   - the production deploy — with its release-owner check, SHA-only `commit` input, automatic rollback on a failed smoke test, and release tags
 - **For the deploy steps**, check the host's current documentation for deploying a specific image tag — it changes over time.
-- **Dependabot or Renovate configuration.**
+- **Dependabot or Renovate configuration** — weekly, one grouped PR per ecosystem for minor and patch updates and one PR per major, across packages, GitHub Actions and the Docker base image.
 
 ## Step 8 — Infra guide
 

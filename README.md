@@ -72,7 +72,7 @@ npx github:dev-emekaa/backend-blueprint init --stack nestjs --force
 
 - Skills, rules and the guide in `docs/blueprint/` are overwritten, including any edits you made — run it on a clean working tree and read the diff before committing.
 - `CLAUDE.md` is never overwritten: it holds your project's values.
-- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.4 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
+- To pin a version: `npx github:dev-emekaa/backend-blueprint#v1.5.5 init --stack nestjs`. If an update doesn't seem to land: `npm cache clean --force`.
 
 ---
 
@@ -134,7 +134,7 @@ Builds one feature area or feature end to end — or a whole phase in one sessio
 **Writes** the backend, its API docs, testing guides and registers
 
 ### `/backend-issue-fix`
-Confirms an issue is real against the code and the docs, reproduces it with a failing test, fixes it, checks it on development and staging, and hands the result to the app teams.
+Takes the issues you give it, the ones logged in `docs/issues.md` and the app teams' handoff files; confirms each is real against the code and the docs, reproduces it with a failing test, fixes it, checks it on development and staging, and hands the result to the app teams.
 **Writes** the fix, the docs it changes, the handoff to the app teams
 
 ### `/api-docs`
@@ -181,7 +181,7 @@ Loaded by Claude Code at the start of every session — except `ci-cd.md`, which
 
 Each client repo — web, mobile, desktop, extension — has a docs sync that copies files between it and this repo, cloned on the same machine. Nothing is run here.
 
-- **Clients pull** this repo's product docs, API docs, phase folders and the guide in `docs/blueprint/`.
+- **Clients pull** this repo's product docs, API docs and testing guides, the seed manifest, phase folders and the guide in `docs/blueprint/`.
 - **Clients push** their screen specs and backend-issues files into `docs/`. They arrive as uncommitted changes: commit them on a branch with a PR, like any other change.
 
 ---

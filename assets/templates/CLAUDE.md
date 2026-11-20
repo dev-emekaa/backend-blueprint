@@ -10,8 +10,10 @@
 | Screen specs | `docs/screen-specs/` |
 | API docs | `docs/api-docs/` |
 | API testing | `docs/api-testing/` |
+| Seed manifest | `docs/seed.md` |
 | Infra setup | `docs/infra/` |
 | Phase folders | `docs/phase-{n}/` |
+| Issues | `docs/issues.md` |
 | Blueprint guide | `docs/blueprint/backend-blueprint.md` |
 
 ## Audiences and clients

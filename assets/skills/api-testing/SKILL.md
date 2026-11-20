@@ -19,13 +19,13 @@ Take these from what I said when invoking, and from the project's own files. Ask
 - **Endpoint + access reference** — the api-rbac register.
 - **Background jobs reference** — each job's name (the dispatcher key) and what it does.
 - **Flow docs (optional)** — to sequence the recommended testing order.
-- **Seed/test-data reference (optional)** — seed accounts/data if the project has a seed.
+- **Seed manifest (where the project has a seed)** — `docs/seed.md`: the accounts, their roles and states, and which walks which flow.
 - **Base URL variable** — default: Postman `{{baseUrl}}`, curl `$BASE_URL`.
 - **Output location** — from the `CLAUDE.md` documentation map: `docs/api-testing/`.
 
 ## Hard rules
 
-1. **Environment-agnostic.** Every request uses the base-URL variable — **never hardcode `localhost` or one environment.** The setup section explains pointing it at local/dev **or** staging **or** any host. Don't assume a specific seed command; reference the seed only if one is provided.
+1. **Environment-agnostic.** Every request uses the base-URL variable — **never hardcode `localhost` or one environment.** The setup section explains pointing it at local/dev **or** staging **or** any host. Don't assume a specific seed command; reference the seed through its manifest where one exists.
 2. **Both tools, every endpoint.** Each endpoint shows a **With curl** command and a **With Postman** description. Use one **canonical set of variable names** across both (e.g. `baseUrl`/`BASE_URL`, `accessToken`/`ACCESS_TOKEN`).
 3. **Shapes come from the api-docs**, not re-invented — this keeps the testing doc and the api-docs from drifting.
 4. **One file per area, `api-testing-{audience?}-{feature-area}.md`.** The primary audience sits at the root of `docs/api-testing/`; other audiences get `{audience}/` subfolders. API testing docs never split by client. For `Scope = all`/subset, process each area **independently, area by area** — never one merged document.
@@ -67,7 +67,7 @@ Produce each `api-testing-{audience?}-{feature-area}.md` in exactly this order:
 | `accessToken` | bearer token from login | `export ACCESS_TOKEN=…` | `{{accessToken}}` |
 | `{areaId}` | {…} | `export {AREA_ID}=…` | `{{areaId}}` |
 
-- **Seed (if available):** {relevant seed accounts/ids for this area, else "register + walk the prerequisite flows".}
+- **Seed:** {the `docs/seed.md` accounts this area's testing order signs in as, by name — the manifest holds their details — else "register + walk the prerequisite flows".}
 - {Optional one-line OS note, e.g. on Windows PowerShell use `curl.exe`.}
 
 ## RBAC quick reference

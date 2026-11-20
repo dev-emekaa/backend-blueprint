@@ -44,9 +44,10 @@ In this order, because each reads the one before:
 4. **`docs/schema.md` and `.claude/rules/backend-architecture.md`** — in the shape `/backend-build`'s Phase 0 writes, from the migrations and the module tree: entities, relationships, ownership chains, enums and aggregate boundaries, with the locked decisions (identity, tenancy, keys, soft delete, audit, money) recorded as the code has them; and the module index with the cross-module call rules the code follows. The registers mirror this module structure, and a later build reads this schema instead of designing one.
 5. **The registers** — run `/api-rbac` and `/background-jobs`. Both are written to audit a codebase: every route and every job gets its row. An endpoint with no access decision in the code is recorded as it behaves today and flagged in Step 3. Like the API docs, the registers are written from the code by their own skills: no marker, no citations.
 6. **API docs and testing guides** — run `/api-docs`, then `/api-testing`. The running code is already their source of truth; they need no marker or citations.
-7. **Screen specs** are the clients' to write; where a client repo exists, its adopt skill writes them and its docs sync brings them here. Record which audiences have no client repo.
+7. **The seed manifest** — `docs/seed.md` from the seed the code has, as `/backend-build` Step 7 writes it, with a `source:` citation per account and no marker; no seed is a foundation gap in Step 3.
+8. **Screen specs** are the clients' to write; where a client repo exists, its adopt skill writes them and its docs sync brings them here. Record which audiences have no client repo.
 
-Items 2, 3 and 6 are written one area at a time, in registry order; the registry, the schema, the architecture index and the registers once. On a large backend, give each area its own subagent told to read this skill and the rules, as `/backend-build`'s whole-phase mode does, or compact between areas.
+Items 2, 3 and 6 are written one area at a time, in registry order; the registry, the schema, the architecture index, the registers and the seed manifest once. On a large backend, give each area its own subagent told to read this skill and the rules, as `/backend-build`'s whole-phase mode does, or compact between areas.
 
 ## Step 3 — Gaps and deviations
 
@@ -59,14 +60,15 @@ Route each item. **Same stack:** a **`/backend-setup` item** when it is a founda
 
 ## Step 4 — Approve, per area → **wait for my approval**
 
-Present each area's reconstructed docs with their citations, shortest area first; then the schema and architecture doc; then the two registers once; then the two lists. I confirm the docs are true — opening a cited line takes seconds — or correct them; marker and citations come off each approved document, and a correction re-runs Step 3's checks for that area. The lists I don't approve here; they are findings I hand to `/backend-setup` and `/backend-issue-fix` from the report, or to `/feature-requirements` as the proposed phase.
+Present each area's reconstructed docs with their citations, shortest area first; then the schema and architecture doc; then the two registers and the seed manifest once; then the two lists. I confirm the docs are true — opening a cited line takes seconds — or correct them; marker and citations come off each approved document, and a correction re-runs Step 3's checks for that area. The lists I don't approve here; they are findings I hand to `/backend-setup` and `/backend-issue-fix` from the report, or to `/feature-requirements` as the proposed phase.
 
 ## Step 5 — Record
 
 1. `CLAUDE.md`: the documentation map with a row for `docs/adoption-report.md`, audiences and clients, and the project configuration from the inventory — **Production status** first, since the template defaults to *not yet launched*, and the **Stack / framework** row corrected to what the code is, with the verdict after it: `{what it is} — {blueprint's stack: all skills apply | not the blueprint's: documentation skills only; see docs/adoption-report.md}`. Record where the product requirements live: any PRD or product doc the inventory found, moved into `docs/product-docs/`; where there is none, a line in the documentation map saying so — the registry and the business rules describe the product until one is written — so later skills stop asking. Under the phase folders, note that Phase 1 is the adopted code and later phases start at 2.
 2. **`docs/phase-1/README.md`**, one line — `Phase 1 is the adopted code; see ../adoption-report.md` — so `/feature-requirements` numbers the next phase 2 and `/phase-review` runs it as a later phase, with the live code as its corpus.
 3. **`docs/adoption-report.md`:** the inventory, the stack verdict, what was written and from where (each document's citations), the foundation gaps, the deviations with their routing, and what I should still verify by hand. Dated; the record of what the blueprint found when it arrived. It names environment variables and services, never their values.
-4. Branch off the repo's default branch (`origin/main` where it has one), commit the docs, the rules and the report, and give me the link to create the PR — never create it yourself.
+4. **`docs/issues.md`:** every item the report routes to `/backend-issue-fix`, as an entry, so the next fix session starts from them.
+5. Branch off the repo's default branch (`origin/main` where it has one), commit the docs, the rules and the report, and give me the link to create the PR — never create it yourself.
 
 ## Report
 
